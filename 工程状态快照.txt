@@ -1,0 +1,252 @@
+====================================================
+⚽ FootballPredict V1.7 ENGINE STATE SNAPSHOT
+====================================================
+
+📅 Status: LIVE SYSTEM (V1 → V1.5 → V1.7 transition)
+🎯 Mode: Statistical Model + Live Event Streaming
+🧠 Architecture: Runtime-based multi-match system (in design convergence phase)
+
+====================================================
+1. PROJECT OVERVIEW
+====================================================
+
+V1  : Elo + Poisson + Fusion + Backtest + Betting
+V1.5: Single-match Live Event System
+V1.7: Multi-match Live Runtime Architecture (current phase)
+
+System is functional but undergoing architectural convergence.
+
+====================================================
+2. CORE DESIGN PRINCIPLE
+====================================================
+
+✔ Pipeline is stateless model engine
+✔ Live layer handles state + events
+✔ Each match = isolated runtime unit
+✔ WebSocket = IO only layer
+✔ Adjustments = live correction layer
+
+====================================================
+3. ACTUAL PROJECT STRUCTURE
+====================================================
+
+FootballPredict/
+├── app/
+│   ├── main.py              ✔ FastAPI entrypoint
+│   ├── run.py              ✔ CLI backtest/benchmark/betting
+│   ├── api.py              ✔ REST API
+│   ├── websocket.py        ⚠ Live WS entry (V1.7 evolving)
+│
+├── core/
+│   ├── pipeline.py         ✔ stateless prediction engine
+│   ├── schema.py           ✔ Match schema
+│   ├── constants.py        ✔ system constants
+│   ├── validator.py        ✔ input validation rules
+│
+├── models/
+│   ├── elo_model.py        ✔
+│   ├── poisson_model.py    ✔
+│
+├── ensemble/
+│   ├── fusion.py           ✔
+│   ├── market_fusion.py    ✔
+│
+├── features/
+│   ├── builder.py          ✔
+│   ├── form.py             ✔
+│   ├── h2h.py              ✔
+│   ├── basic_features.py   ⚠ not fully integrated
+│
+├── data/
+│   ├── real_matches.py     ✔
+│   ├── match_normalizer.py ✔
+│   ├── odds_normalizer.py  ✔
+│   ├── odds_calibrator.py  ✔
+│
+├── evaluation/
+│   ├── backtest.py         ✔
+│   ├── benchmark.py        ✔
+│   ├── betting.py          ✔
+│   ├── metrics.py          ✔
+│   ├── value_engine.py     ✔
+│
+├── live/
+│   ├── state.py            ✔ MatchState
+│   ├── events.py           ✔ MatchEvent + EventType
+│   ├── queue.py            ✔ EventQueue (sorted list V1)
+│   ├── processor.py        ✔ state transition engine
+│   ├── predictor.py        ✔ LivePredictor (pipeline + adjuster)
+│   ├── adjuster.py         ✔ live correction layer (used in predictor)
+│   ├── pipeline.py         ✔ LivePipeline V1.5 (single-match engine)
+│   ├── state_store.py      ✔ persistent state registry
+│   ├── replay.py           ✔ event replay system
+│
+└── test_events.py          ⚠ websocket test unstable
+
+====================================================
+4. LIVE ARCHITECTURE (CURRENT STATE)
+====================================================
+
+CURRENT FLOW:
+
+WebSocket
+   ↓
+LivePipeline / Runtime (transitioning)
+   ↓
+EventQueue (sorted)
+   ↓
+EventProcessor (state update)
+   ↓
+MatchState
+   ↓
+LivePredictor
+   ↓
+Pipeline (Elo + Poisson + Fusion)
+   ↓
+Adjuster (live correction)
+   ↓
+Output probability (H/D/A)
+
+====================================================
+5. LIVE SYSTEM DESIGN TARGET (V1.7 FINAL FORM)
+====================================================
+
+TARGET ARCHITECTURE:
+
+WS Layer (IO only)
+   ↓
+LiveManager (multi-match router)
+   ↓
+MatchRuntime (core execution unit)
+   ↓
+   ├── State
+   ├── Queue
+   ├── Processor
+   ├── Predictor
+   └── Adjuster
+   ↓
+Pipeline (stateless models)
+   ↓
+Return probabilities
+
+====================================================
+6. CURRENT CAPABILITIES
+====================================================
+
+✔ Elo rating system
+✔ Poisson goal model
+✔ Fusion probability model
+✔ Market odds calibration
+✔ Backtesting engine
+✔ Benchmark comparison
+✔ Betting simulation (Kelly + ROI)
+✔ Live single-match event processing
+✔ WebSocket streaming (partial stable)
+
+====================================================
+7. KNOWN LIMITATIONS (V1)
+====================================================
+
+⚠ Poisson uses simplified goal simulation
+⚠ FeatureBuilder not fully integrated into pipeline
+⚠ LivePipeline still exists (should evolve into Runtime)
+⚠ WebSocket layer not fully stable under concurrency
+⚠ No full multi-match abstraction yet
+
+====================================================
+8. V1.7 CONVERGENCE RULES
+====================================================
+
+✔ Pipeline must remain stateless
+✔ State is isolated per match
+✔ Queue belongs to runtime only
+✔ WS must not contain business logic
+✔ Adjuster is part of live layer only
+✔ Replay is offline system only
+
+====================================================
+9. STABILITY LEVEL
+====================================================
+
+Models         : ████████░░ 80%
+Backtest       : █████████░ 90%
+Betting Engine : ████████░░ 85%
+Live System    : █████░░░░░ 50%
+Multi-match    : ██░░░░░░░░ 20%
+Architecture   : ██████░░░░ 60%
+
+====================================================
+10. NEXT PHASE (V1.7 ROADMAP)
+====================================================
+
+Phase 1:
+- Introduce MatchRuntime abstraction
+
+Phase 2:
+- Introduce LiveManager (multi-match routing)
+
+Phase 3:
+- Fully replace LivePipeline with runtime system
+
+Phase 4:
+- Stabilize WebSocket + concurrency model
+
+
+====================================================
+11. DEVELOPMENT COMMUNICATION SPECIFICATION
+====================================================
+
+【Rule 1 - Problem Diagnosis】
+
+Whenever a problem occurs:
+
+Step 1
+Provide the diagnosis path first.
+
+For example:
+
+Problem
+    ↓
+Possible Causes
+    ↓
+Files to inspect
+    ↓
+Final Fix
+
+Do not modify code directly before determining the root cause.
+
+
+----------------------------------------------------
+
+【Rule 2 - Full File Replacement】
+
+Whenever a file needs modification:
+
+Always provide:
+
+Folder/FileName
+
+↓
+
+Complete updated source code
+
+instead of partial snippets or patch blocks.
+
+Reason:
+
+- Prevent code divergence
+- Keep AI and local project synchronized
+- Reduce manual searching/editing
+- Ensure copy-and-replace workflow
+
+----------------------------------------------------
+
+Development Principle
+
+Prefer complete files over partial code.
+
+Maintain one authoritative version of every source file.
+
+====================================================
+END OF SNAPSHOT
+====================================================
