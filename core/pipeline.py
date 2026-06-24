@@ -5,46 +5,77 @@ from ensemble.fusion import LearnedFusion
 from data.odds_calibrator import odds_to_prob
 from ensemble.market_fusion import MarketFusion
 
+# =========================
+# V1.8 Evolution Layer
+# =========================
+from evolution.drift_detector import DriftDetector
+from evolution.calibrator import Calibrator
+
 
 class Pipeline:
     def __init__(self):
 
-        # 市场融合模型（最终层）
+        # =========================
+        # Market Layer（不可删除）
+        # =========================
         self.market_fusion = MarketFusion(alpha=0.7)
 
-        # 基础模型
+        # =========================
+        # Base Models
+        # =========================
         self.elo = EloModel()
         self.poisson = PoissonModel()
 
-        # 特征（V2启用，当前仅训练）
+        # =========================
+        # Features
+        # =========================
         self.features = FeatureBuilder()
 
-        # 融合模型
+        # =========================
+        # Fusion Layer
+        # =========================
         self.fusion = LearnedFusion()
 
+        # =========================
+        # V1.8 Evolution Layer（新增）
+        # =========================
+        self.drift_detector = DriftDetector(window_size=50)
+        self.calibrator = Calibrator()
+
+    # =========================
+    # Training
+    # =========================
     def train(self, matches):
 
         for m in matches:
-
             self.elo.update(m["home"], m["away"], m["result"])
             self.features.train_update(m)
 
         self.poisson.train(matches)
 
     # =========================
-    # 🎯 最终预测（推荐使用）
+    # 🎯 主预测入口（推荐）
     # =========================
     def predict(self, home, away, odds=None):
 
-        # 【V1-FREEZE】统一融合入口（唯一模型路径）
+        # =========================
+        # 1️⃣ Fusion base
+        # =========================
         base = self.predict_fusion(home, away)
 
-        # 【V1-FREEZE】旧路径已废弃（不可恢复）
-        # elo_pred = self.elo.predict(home, away)
-        # poi_pred = self.poisson.predict_1x2(home, away)
-        # model_raw = self.fusion.fuse(elo_pred, poi_pred)
+        # =========================
+        # 2️⃣ Evolution Layer（V1.8新增）
+        # =========================
+        self.drift_detector.update(base)
 
-        # 市场融合层
+        if self.drift_detector.detect():
+            print("[V1.8 DRIFT] model distribution shift detected")
+
+        base = self.calibrator.calibrate(base)
+
+        # =========================
+        # 3️⃣ Market Fusion（必须保留）
+        # =========================
         if odds is not None:
             market_prob = odds_to_prob(odds)
             return self.market_fusion.fuse(base, market_prob)
@@ -52,28 +83,21 @@ class Pipeline:
         return base
 
     # =========================
-    # 🔬 纯Elo
+    # 🔬 Elo raw
     # =========================
     def predict_raw(self, home, away):
-        """core/pipeline.py | V1-FREEZE | Elo单模型输出（不可作为融合使用）"""
         return self.elo.predict(home, away)
 
     # =========================
-    # 🔬 Poisson
+    # 🔬 Poisson raw
     # =========================
     def predict_poisson(self, home, away):
-        """core/pipeline.py | V1-FREEZE | Poisson单模型输出（不可直接用于决策）"""
         return self.poisson.predict_1x2(home, away)
 
     # =========================
-    # 🔬 Fusion（标准入口）
+    # 🔬 Fusion core
     # =========================
     def predict_fusion(self, home, away):
-        """
-        core/pipeline.py | V1-FREEZE
-        标准模型融合入口（Elo + Poisson）
-        全系统唯一 Fusion 标准接口
-        """
 
         elo = self.elo.predict(home, away)
         poi = self.poisson.predict_1x2(home, away)

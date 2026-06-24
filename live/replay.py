@@ -1,72 +1,92 @@
-"""
-live/replay.py
-
-LIVE SYSTEM V1.5
-
-历史回放引擎（Replay Engine）
-
-职责：
-    - 重放历史事件
-    - 复现 LIVE 系统行为
-    - 生成预测轨迹
-"""
-
 from typing import List, Dict, Any
 
-from live.events import MatchEvent
-from live.pipeline import LivePipeline
+from live.runtime import MatchRuntime
+from live.state_store import StateStore
+from live.events import MatchEvent, EventType
+from live.processor import EventProcessor
+from live.predictor import LivePredictor
 
 
 class ReplayEngine:
     """
-    用于历史比赛回放
+    V1.7 Replay Engine
+
+    职责：
+        - 从 StateStore 读取历史
+        - 重建 MatchRuntime
+        - 重新执行事件流
+        - 输出 replay 结果
     """
 
-    def __init__(self, pipeline: LivePipeline):
-        self.pipeline = pipeline
+    def __init__(self, state_store: StateStore, predictor: LivePredictor):
+        self.state_store = state_store
+        self.predictor = predictor
 
     # =========================
-    # 主入口
+    # 1️⃣ Replay 单场比赛
     # =========================
-    def run(self, events: List[MatchEvent]) -> List[Dict[str, Any]]:
-        """
-        输入：
-            events: 历史事件列表
+    def replay_match(self, match_id: str):
+        history = self.state_store.get_event_timeline(match_id)
 
-        输出：
-            每一步的预测轨迹
-        """
+        if not history:
+            raise ValueError(f"No history found for match: {match_id}")
 
-        outputs = []
+        # 重建 runtime（独立实例）
+        runtime = MatchRuntime(match_id=match_id, predictor=self.predictor)
 
-        # =========================
-        # 1️⃣ 初始化比赛（必须手动）
-        # =========================
-        if not events:
-            return outputs
+        # 初始化状态
+        first_state = history[0].state
+        runtime.state = first_state
 
-        first = events[0]
-        self.pipeline.start_match(first.team or "HOME", "AWAY")
+        results = []
 
         # =========================
-        # 2️⃣ 顺序回放
+        # 逐条 replay
         # =========================
-        for event in sorted(events, key=lambda e: e.minute):
+        for snap in history:
+            state = snap.state
 
-            # 推入 + 处理 + 预测
-            result = self.pipeline.step(event)
+            # 构造“伪事件”（用于回放驱动）
+            event = MatchEvent(
+                minute=snap.minute,
+                event_type=EventType.REPLAY,  # 特殊类型
+                team="replay",
+                player=None,
+            )
 
-            outputs.append(
+            runtime.state = state
+
+            prob = runtime.predict()
+
+            results.append(
                 {
-                    "minute": event.minute,
-                    "event": event.event_type.value,
+                    "minute": snap.minute,
                     "state": {
-                        "home_score": self.pipeline.state.home_score,
-                        "away_score": self.pipeline.state.away_score,
-                        "minute": self.pipeline.state.minute,
+                        "home_score": runtime.state.home_score,
+                        "away_score": runtime.state.away_score,
+                        "minute": runtime.state.minute,
                     },
-                    "prob": result,
+                    "prob": prob,
                 }
             )
 
-        return outputs
+        return {"match_id": match_id, "replay": results}
+
+    # =========================
+    # 2️⃣ Step-by-step Replay
+    # =========================
+    def replay_step(self, match_id: str, minute: int):
+        history = self.state_store.get_history(match_id)
+
+        for snap in history:
+            if snap.minute == minute:
+                runtime = MatchRuntime(match_id, self.predictor)
+                runtime.state = snap.state
+
+                return {
+                    "minute": minute,
+                    "state": runtime.state,
+                    "prob": runtime.predict(),
+                }
+
+        return None

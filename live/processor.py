@@ -1,40 +1,35 @@
-"""
-live/processor.py
-
-LIVE SYSTEM V1.5
-
-事件处理器（核心引擎）
-
-职责：
-    - 接收 MatchEvent
-    - 更新 MatchState
-"""
-
 from live.state import MatchState
 from live.events import MatchEvent, EventType
 
 
 class EventProcessor:
-    """
-    将事件应用到比赛状态
-    """
 
     def __init__(self):
-        pass
+        # 用于简单幂等（避免重复事件）
+        self._seen = set()
 
     # =========================
-    # 主入口
+    # 单事件处理
     # =========================
     def process(self, state: MatchState, event: MatchEvent) -> MatchState:
-        """
-        应用单个事件到状态
-        """
 
-        # 记录事件
+        # -------------------------
+        # 1. 幂等性保护（关键修复）
+        # -------------------------
+        event_key = (event.minute, event.event_type, event.team, event.player)
+
+        if event_key in self._seen:
+            return state
+
+        self._seen.add(event_key)
+
+        # -------------------------
+        # 2. 记录事件
+        # -------------------------
         state.events.append(event)
 
         # =========================
-        # 1️⃣ 进球
+        # 3. 进球
         # =========================
         if event.event_type == EventType.GOAL:
             if event.team == state.home:
@@ -43,27 +38,29 @@ class EventProcessor:
                 state.away_score += 1
 
         # =========================
-        # 2️⃣ 乌龙球
+        # 4. 乌龙球（修正逻辑）
         # =========================
         elif event.event_type == EventType.OWN_GOAL:
+            # 乌龙球：给对方加分（不依赖 event.team 归属）
             if event.team == state.home:
                 state.away_score += 1
             elif event.team == state.away:
                 state.home_score += 1
 
         # =========================
-        # 3️⃣ 时间更新
+        # 5. 时间更新（防回退污染）
         # =========================
-        if event.minute >= state.minute:
+        if event.minute > state.minute:
             state.minute = event.minute
 
         # =========================
-        # 4️⃣ 比赛阶段更新（简化版）
+        # 6. 状态机更新（简化修复）
         # =========================
-        if state.minute >= 90:
-            state.status = "FT"
-        elif state.minute >= 45 and state.status == "1H":
-            state.status = "2H"
+        if state.status != "FT":
+            if state.minute >= 90:
+                state.status = "FT"
+            elif state.minute >= 45 and state.status == "1H":
+                state.status = "2H"
 
         return state
 
@@ -71,9 +68,6 @@ class EventProcessor:
     # 批量处理
     # =========================
     def process_all(self, state: MatchState, events: list[MatchEvent]) -> MatchState:
-        """
-        顺序处理多个事件
-        """
 
         for event in sorted(events, key=lambda e: e.minute):
             state = self.process(state, event)

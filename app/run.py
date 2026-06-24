@@ -50,24 +50,44 @@ def main():
         from evaluation.betting import BettingEngine
         from evaluation.value_engine import ValueBetEngine
 
-        be = BettingEngine(bankroll=1000)
-        ve = ValueBetEngine()
+        print("[RUN] Betting mode started")
+
+        try:
+            be = BettingEngine(bankroll=1000)
+            ve = ValueBetEngine()
+        except Exception as e:
+            print(f"[ERROR] Engine init failed: {e}")
+            return
 
         print("===== 投注结果 =====")
 
         for m in matches:
 
-            pred = pipe.predict(m["home"], m["away"], odds=m["odds"])
+            try:
+                odds = m.get("odds", None)
 
-            ev = ve.find_value_bets(pred, m["odds"])
+                pred = pipe.predict(m["home"], m["away"], odds=odds)
 
-            # =========================
-            # V1-FREEZE: EV仅分析
-            # =========================
-            if ev:
-                print(ev)
+                ev = None
+                try:
+                    ev = ve.find_value_bets(pred, odds)
+                except Exception:
+                    ev = None
 
-        print("ROI:", be.run(matches, pipe))
+                # =========================
+                # V1-FREEZE: EV仅分析
+                # =========================
+                if ev:
+                    print(ev)
+
+            except Exception as e:
+                print(f"[WARN] match failed: {m.get('home')} vs {m.get('away')} -> {e}")
+                continue
+
+        try:
+            print("ROI:", be.run(matches, pipe))
+        except Exception as e:
+            print(f"[ERROR] ROI calculation failed: {e}")
 
 
 if __name__ == "__main__":
