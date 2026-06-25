@@ -1,47 +1,64 @@
+import logging
 from evaluation.metrics import logloss, brier_score
 
+logger = logging.getLogger(__name__)
 
-class ModelBenchmark:
+
+class BenchmarkV2:
 
     def __init__(self, pipeline):
         self.pipeline = pipeline
 
     def run(self, matches):
 
-        models = {
-            "elo": lambda m: self.pipeline.predict_raw(m["home"], m["away"]),
-            "poisson": lambda m: self.pipeline.predict_poisson(m["home"], m["away"]),
-            "fusion": lambda m: self.pipeline.predict_fusion(m["home"], m["away"]),
-            # =========================
-            # V1-FREEZE: market is pipeline mode
-            # =========================
-            "market": lambda m: self.pipeline.predict(
-                m["home"], m["away"], odds=m["odds"]
-            ),
+        results = {
+            "elo": {"logloss": 0, "brier": 0, "count": 0},
+            "poisson": {"logloss": 0, "brier": 0, "count": 0},
+            "fusion": {"logloss": 0, "brier": 0, "count": 0},
         }
 
-        results = {name: {"logloss": 0, "brier": 0, "count": 0} for name in models}
+        rejected = 0
 
-        for m in matches:
+        for i, m in enumerate(matches):
 
-            actual = str(m["result"]).strip().upper()
+            home = m.get("home")
+            away = m.get("away")
+            actual = m.get("result")
+
+            if not home or not away or actual not in {"H", "D", "A"}:
+                rejected += 1
+                continue
+
+            models = {
+                "elo": self.pipeline.predict_raw,
+                "poisson": self.pipeline.predict_poisson,
+                "fusion": self.pipeline.predict_fusion,
+            }
 
             for name, fn in models.items():
 
-                pred = fn(m)
+                try:
+                    pred = fn(home, away)
 
-                results[name]["logloss"] += logloss(pred, actual)
-                results[name]["brier"] += brier_score(pred, actual)
-                results[name]["count"] += 1
+                    if not isinstance(pred, dict):
+                        raise ValueError("bad_pred")
+
+                    if not all(k in pred for k in ["H", "D", "A"]):
+                        raise ValueError("missing_keys")
+
+                    results[name]["logloss"] += logloss(pred, actual)
+                    results[name]["brier"] += brier_score(pred, actual)
+                    results[name]["count"] += 1
+
+                except Exception:
+                    rejected += 1
+                    continue
 
         for name in results:
-
             c = results[name]["count"]
+            if c > 0:
+                results[name]["logloss"] /= c
+                results[name]["brier"] /= c
 
-            if c == 0:
-                continue
-
-            results[name]["logloss"] /= c
-            results[name]["brier"] /= c
-
+        results["rejected"] = rejected
         return results

@@ -4,49 +4,41 @@ class LearnedFusion:
 
     def fuse(self, elo_pred, poisson_pred):
 
-        result = {}
+        result = {"H": 0.0, "D": 0.0, "A": 0.0}
 
+        # -------------------------
+        # safe aggregation
+        # -------------------------
         for k in ["H", "D", "A"]:
 
-            # =========================
-            # V1-FREEZE: 输入安全检查
-            # =========================
-            if k not in elo_pred or k not in poisson_pred:
-                continue
+            elo_v = elo_pred.get(k, 0.0)
+            poi_v = poisson_pred.get(k, 0.0)
 
-            result[k] = (
-                self.weights["elo"] * elo_pred[k]
-                + self.weights["poisson"] * poisson_pred[k]
-            )
+            result[k] = self.weights["elo"] * elo_v + self.weights["poisson"] * poi_v
 
-        # =========================
-        # V1-FREEZE: 对称性修正
-        # =========================
+        # -------------------------
+        # heuristic stabilization (safe version)
+        # -------------------------
         gap = result["H"] - result["A"]
 
         if abs(gap) < 0.015:
-            result["H"] *= 1.03
-            result["A"] *= 1.03
-            result["D"] *= 0.92
+            result["H"] *= 1.02
+            result["A"] *= 1.02
+            result["D"] *= 0.96
 
-        # =========================
-        # V1-FREEZE: D抑制（heuristic）
-        # =========================
-        result["D"] *= 0.92
+        result["D"] *= 0.95
 
-        # =========================
-        # V1-FREEZE: 数值稳定性约束
-        # =========================
+        # -------------------------
+        # numerical safety
+        # -------------------------
         for k in result:
+            if result[k] is None or result[k] != result[k]:
+                result[k] = 0.0
             result[k] = max(result[k], 1e-9)
 
         total = sum(result.values())
 
-        # =========================
-        # V1-FREEZE: 归一化
-        # =========================
-        return {
-            "H": result["H"] / total,
-            "D": result["D"] / total,
-            "A": result["A"] / total,
-        }
+        if total <= 0:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+        return {k: result[k] / total for k in result}

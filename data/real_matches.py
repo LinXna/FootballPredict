@@ -1,6 +1,10 @@
 import csv
+import logging
+
 from data.match_normalizer import normalize_match
 from data.odds_normalizer import normalize_odds
+
+logger = logging.getLogger(__name__)
 
 
 def load_real_matches(path="data/real_matches.csv"):
@@ -9,20 +13,24 @@ def load_real_matches(path="data/real_matches.csv"):
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
 
-        for row in reader:
+        for idx, row in enumerate(reader):
 
-            # =========================
-            # V1-FREEZE: 安全解析比分
-            # =========================
             try:
-                hg = int(float(row["home_goals"]))
-                ag = int(float(row["away_goals"]))
-            except:
+                hg = row.get("home_goals")
+                ag = row.get("away_goals")
+
+                if hg is None or ag is None:
+                    logger.warning(f"missing goals at row {idx}")
+                    continue
+
+                hg = int(float(hg))
+                ag = int(float(ag))
+
+            except Exception as e:
+                logger.warning(f"invalid score row {idx}: {e}")
                 continue
 
-            # =========================
-            # V1-FREEZE: 结果推导
-            # =========================
+            # result inference
             if hg > ag:
                 result = "H"
             elif hg < ag:
@@ -30,27 +38,32 @@ def load_real_matches(path="data/real_matches.csv"):
             else:
                 result = "D"
 
-            # =========================
-            # V1-FREEZE: match标准化
-            # =========================
-            match = normalize_match(
-                {
-                    "home": row.get("home", "").strip(),
-                    "away": row.get("away", "").strip(),
-                    "result": result,
-                }
-            )
+            try:
+                match = normalize_match(
+                    {
+                        "home": (row.get("home") or "").strip(),
+                        "away": (row.get("away") or "").strip(),
+                        "result": result,
+                    }
+                )
 
-            # =========================
-            # V1-FREEZE: odds安全接入
-            # =========================
+                if not match:
+                    continue
+
+            except Exception as e:
+                logger.warning(f"normalize_match failed row {idx}: {e}")
+                continue
+
             raw_odds = {
-                "H": row.get("odds_h", 2.0),
-                "D": row.get("odds_d", 3.0),
-                "A": row.get("odds_a", 3.0),
+                "H": row.get("odds_h"),
+                "D": row.get("odds_d"),
+                "A": row.get("odds_a"),
             }
 
-            odds = normalize_odds(raw_odds)
+            try:
+                odds = normalize_odds(raw_odds)
+            except Exception:
+                odds = {"H": 2.5, "D": 3.2, "A": 2.8}
 
             match["odds"] = odds
 

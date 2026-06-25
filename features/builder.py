@@ -5,19 +5,12 @@ from features.h2h import H2HFeature
 class FeatureBuilder:
 
     def __init__(self):
-
-        # =========================
-        # V1-FREEZE: 子特征模块
-        # =========================
         self.form = FormFeature(window=5)
         self.h2h = H2HFeature()
 
     def train_update(self, match):
 
-        # =========================
-        # V1-FREEZE: 防御更新
-        # =========================
-        if not match:
+        if not isinstance(match, dict):
             return
 
         self.form.update(match)
@@ -25,22 +18,21 @@ class FeatureBuilder:
 
     def build(self, home, away):
 
-        # =========================
-        # V1-FREEZE: form特征
-        # =========================
-        home_form = self.form.get_form(home) or 1.0
-        away_form = self.form.get_form(away) or 1.0
+        if not home or not away:
+            return None
 
-        # =========================
-        # V1-FREEZE: 对战特征
-        # =========================
-        h2h = self.h2h.get_h2h(home, away) or 0.5
+        home_form = self.form.get_form(home)
+        away_form = self.form.get_form(away)
 
-        # =========================
-        # V1-FREEZE: feature contract输出
-        # =========================
+        h2h = self.h2h.get_h2h(home, away)
+
+        if not isinstance(h2h, dict):
+            h2h = {"H": 0.34, "D": 0.33, "A": 0.33}
+
         return {
-            "home_form": home_form,
-            "away_form": away_form,
-            "h2h": h2h,
+            "home_form": float(home_form),
+            "away_form": float(away_form),
+            "h2h_H": float(h2h.get("H", 0.34)),
+            "h2h_D": float(h2h.get("D", 0.33)),
+            "h2h_A": float(h2h.get("A", 0.33)),
         }

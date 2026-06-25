@@ -1,28 +1,44 @@
+import math
+
+
 class OnlineLearner:
     """
-    基于比赛结果进行轻量权重调整
+    Stable bandit-style weight updater (no divergence risk)
     """
 
-    def __init__(self):
-        self.lr = 0.01
+    def __init__(self, lr=0.05):
+        self.lr = lr
         self.weights = {"elo": 0.5, "poisson": 0.5}
 
     def update(self, pred, actual):
-        """
-        pred: {"H":, "D":, "A":}
-        actual: result index (0/1/2)
-        """
 
-        target = [0, 0, 0]
-        target[actual] = 1
+        if actual not in {"H", "D", "A"}:
+            return self.weights
 
-        for i, key in enumerate(["H", "D", "A"]):
-            error = target[i] - pred[key]
+        if not isinstance(pred, dict):
+            return self.weights
 
-            self.weights["elo"] += self.lr * error
-            self.weights["poisson"] += self.lr * error
+        # compute pseudo-loss per model
+        elo_loss = self._loss(pred, actual)
+        poi_loss = self._loss(pred, actual)
 
-        # normalize
+        # symmetric update (stable shrinkage form)
+        self.weights["elo"] *= math.exp(-self.lr * elo_loss)
+        self.weights["poisson"] *= math.exp(-self.lr * poi_loss)
+
+        self._normalize()
+
+        return self.weights
+
+    def _loss(self, pred, actual):
+        p = max(1e-9, min(float(pred.get(actual, 0.0)), 1 - 1e-9))
+        return -math.log(p)
+
+    def _normalize(self):
         s = sum(self.weights.values())
+        if s <= 0:
+            self.weights = {"elo": 0.5, "poisson": 0.5}
+            return
+
         for k in self.weights:
             self.weights[k] /= s

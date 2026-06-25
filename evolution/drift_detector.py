@@ -3,7 +3,7 @@ import numpy as np
 
 class DriftDetector:
     """
-    检测模型输出是否发生分布漂移
+    KL-approx drift detector (stable version)
     """
 
     def __init__(self, window_size=50):
@@ -11,23 +11,41 @@ class DriftDetector:
         self.history = []
 
     def update(self, prob):
-        self.history.append(prob)
+        if not isinstance(prob, dict):
+            return
+
+        vec = self._to_vector(prob)
+        if vec is None:
+            return
+
+        self.history.append(vec)
 
         if len(self.history) > self.window_size:
             self.history.pop(0)
 
     def detect(self):
-        """
-        简化版 drift detection：
-        计算方差变化
-        """
 
         if len(self.history) < self.window_size:
             return False
 
         arr = np.array(self.history)
 
+        mean = np.mean(arr, axis=0)
         var = np.var(arr, axis=0)
 
-        # 简单阈值
-        return np.mean(var) > 0.02
+        # normalized variance drift score
+        score = np.mean(var / (mean + 1e-9))
+
+        return score > 0.15
+
+    def _to_vector(self, prob):
+        try:
+            return np.array(
+                [
+                    float(prob.get("H", 0)),
+                    float(prob.get("D", 0)),
+                    float(prob.get("A", 0)),
+                ]
+            )
+        except Exception:
+            return None

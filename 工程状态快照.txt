@@ -1,252 +1,316 @@
-====================================================
-⚽ FootballPredict V1.7 ENGINE STATE SNAPSHOT
-====================================================
+=========================================================
+⚽ FootballPredict ENGINE STATE SNAPSHOT
+=========================================================
 
-📅 Status: LIVE SYSTEM (V1 → V1.5 → V1.7 transition)
-🎯 Mode: Statistical Model + Live Event Streaming
-🧠 Architecture: Runtime-based multi-match system (in design convergence phase)
+PROJECT
+---------------------------------------------------------
+Project Name : FootballPredict
+Current Stage: V1.8 Stable
+Next Target  : V2.0 AI Adaptive Engine
+Status       : Development
+Architecture : Single Execution Pipeline
 
-====================================================
-1. PROJECT OVERVIEW
-====================================================
+Repository
+---------------------------------------------------------
+Engine Version : V1.8
+Adaptive Layer : Planned (V2.0)
+Database        : SQLite
+Python          : 3.11+
 
-V1  : Elo + Poisson + Fusion + Backtest + Betting
-V1.5: Single-match Live Event System
-V1.7: Multi-match Live Runtime Architecture (current phase)
+=========================================================
+SYSTEM ARCHITECTURE
+=========================================================
 
-System is functional but undergoing architectural convergence.
+                   app/main.py
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+    Prediction Pipeline          Live Manager
+        │                               │
+        ▼                               ▼
+ Feature Engineering            Live Match Control
+        │                               │
+        ▼                               ▼
+   Model Ensemble              Feedback Loop
+        │                               │
+        └──────────────┬────────────────┘
+                       ▼
+                 Result Output
 
-====================================================
-2. CORE DESIGN PRINCIPLE
-====================================================
+=========================================================
+CORE MODULE STATUS
+=========================================================
 
-✔ Pipeline is stateless model engine
-✔ Live layer handles state + events
-✔ Each match = isolated runtime unit
-✔ WebSocket = IO only layer
-✔ Adjustments = live correction layer
+app/
+---------------------------------------------------------
+main.py
+Status:
+✔ Stable
 
-====================================================
-3. ACTUAL PROJECT STRUCTURE
-====================================================
+Responsibilities:
+- System startup
+- Dependency initialization
+- Pipeline execution
+- Live mode startup
 
-FootballPredict/
-├── app/
-│   ├── main.py              ✔ FastAPI entrypoint
-│   ├── run.py              ✔ CLI backtest/benchmark/betting
-│   ├── api.py              ✔ REST API
-│   ├── websocket.py        ⚠ Live WS entry (V1.7 evolving)
-│
-├── core/
-│   ├── pipeline.py         ✔ stateless prediction engine
-│   ├── schema.py           ✔ Match schema
-│   ├── constants.py        ✔ system constants
-│   ├── validator.py        ✔ input validation rules
-│
-├── models/
-│   ├── elo_model.py        ✔
-│   ├── poisson_model.py    ✔
-│
-├── ensemble/
-│   ├── fusion.py           ✔
-│   ├── market_fusion.py    ✔
-│
-├── features/
-│   ├── builder.py          ✔
-│   ├── form.py             ✔
-│   ├── h2h.py              ✔
-│   ├── basic_features.py   ⚠ not fully integrated
-│
-├── data/
-│   ├── real_matches.py     ✔
-│   ├── match_normalizer.py ✔
-│   ├── odds_normalizer.py  ✔
-│   ├── odds_calibrator.py  ✔
-│
-├── evaluation/
-│   ├── backtest.py         ✔
-│   ├── benchmark.py        ✔
-│   ├── betting.py          ✔
-│   ├── metrics.py          ✔
-│   ├── value_engine.py     ✔
-│
-├── live/
-│   ├── state.py            ✔ MatchState
-│   ├── events.py           ✔ MatchEvent + EventType
-│   ├── queue.py            ✔ EventQueue (sorted list V1)
-│   ├── processor.py        ✔ state transition engine
-│   ├── predictor.py        ✔ LivePredictor (pipeline + adjuster)
-│   ├── adjuster.py         ✔ live correction layer (used in predictor)
-│   ├── pipeline.py         ✔ LivePipeline V1.5 (single-match engine)
-│   ├── state_store.py      ✔ persistent state registry
-│   ├── replay.py           ✔ event replay system
-│
-└── test_events.py          ⚠ websocket test unstable
+---------------------------------------------------------
 
-====================================================
-4. LIVE ARCHITECTURE (CURRENT STATE)
-====================================================
+core/
+---------------------------------------------------------
 
-CURRENT FLOW:
+pipeline.py
+Status:
+✔ Stable
 
-WebSocket
-   ↓
-LivePipeline / Runtime (transitioning)
-   ↓
-EventQueue (sorted)
-   ↓
-EventProcessor (state update)
-   ↓
-MatchState
-   ↓
-LivePredictor
-   ↓
-Pipeline (Elo + Poisson + Fusion)
-   ↓
-Adjuster (live correction)
-   ↓
-Output probability (H/D/A)
+Responsibilities:
+- Prediction workflow
+- Feature generation
+- Ensemble execution
 
-====================================================
-5. LIVE SYSTEM DESIGN TARGET (V1.7 FINAL FORM)
-====================================================
+---------------------------------------------------------
 
-TARGET ARCHITECTURE:
+features/
+---------------------------------------------------------
 
-WS Layer (IO only)
-   ↓
-LiveManager (multi-match router)
-   ↓
-MatchRuntime (core execution unit)
-   ↓
-   ├── State
-   ├── Queue
-   ├── Processor
-   ├── Predictor
-   └── Adjuster
-   ↓
-Pipeline (stateless models)
-   ↓
-Return probabilities
+Status:
+✔ Stable
 
-====================================================
-6. CURRENT CAPABILITIES
-====================================================
+Current Features
 
-✔ Elo rating system
-✔ Poisson goal model
-✔ Fusion probability model
-✔ Market odds calibration
-✔ Backtesting engine
-✔ Benchmark comparison
-✔ Betting simulation (Kelly + ROI)
-✔ Live single-match event processing
-✔ WebSocket streaming (partial stable)
+✔ Elo
+✔ Recent Form
+✔ Attack Rating
+✔ Defence Rating
+✔ Home Advantage
+✔ Goal Statistics
+✔ Historical Performance
 
-====================================================
-7. KNOWN LIMITATIONS (V1)
-====================================================
+---------------------------------------------------------
 
-⚠ Poisson uses simplified goal simulation
-⚠ FeatureBuilder not fully integrated into pipeline
-⚠ LivePipeline still exists (should evolve into Runtime)
-⚠ WebSocket layer not fully stable under concurrency
-⚠ No full multi-match abstraction yet
+ensemble/
+---------------------------------------------------------
 
-====================================================
-8. V1.7 CONVERGENCE RULES
-====================================================
+fusion.py
 
-✔ Pipeline must remain stateless
-✔ State is isolated per match
-✔ Queue belongs to runtime only
-✔ WS must not contain business logic
-✔ Adjuster is part of live layer only
-✔ Replay is offline system only
+Status:
+✔ Stable
+▲ Dynamic Adaptive Fusion planned
 
-====================================================
-9. STABILITY LEVEL
-====================================================
+Current
 
-Models         : ████████░░ 80%
-Backtest       : █████████░ 90%
-Betting Engine : ████████░░ 85%
-Live System    : █████░░░░░ 50%
-Multi-match    : ██░░░░░░░░ 20%
-Architecture   : ██████░░░░ 60%
+✔ Static Fusion
 
-====================================================
-10. NEXT PHASE (V1.7 ROADMAP)
-====================================================
+Planned (V2.0)
 
-Phase 1:
-- Introduce MatchRuntime abstraction
+□ Dynamic Weight
+□ Confidence Adjustment
+□ Adaptive Fusion
 
-Phase 2:
-- Introduce LiveManager (multi-match routing)
+---------------------------------------------------------
 
-Phase 3:
-- Fully replace LivePipeline with runtime system
+learning/
+---------------------------------------------------------
 
-Phase 4:
-- Stabilize WebSocket + concurrency model
+feedback.py
 
+Status:
+✔ Basic Feedback Loop
 
-====================================================
-11. DEVELOPMENT COMMUNICATION SPECIFICATION
-====================================================
+Current
 
-【Rule 1 - Problem Diagnosis】
+✔ Result Buffer
+✔ Batch Trigger
 
-Whenever a problem occurs:
+Planned
 
-Step 1
-Provide the diagnosis path first.
+□ Online Learning
+□ Self Evaluation
+□ Adaptive Feedback
 
-For example:
+---------------------------------------------------------
 
-Problem
-    ↓
-Possible Causes
-    ↓
-Files to inspect
-    ↓
-Final Fix
+weight_updater.py
 
-Do not modify code directly before determining the root cause.
+Status:
+△ Skeleton
 
+Current
 
-----------------------------------------------------
+✔ Batch Interface
 
-【Rule 2 - Full File Replacement】
+Pending
 
-Whenever a file needs modification:
+□ Weight Update
+□ Weight Persistence
+□ Adaptive Learning
+□ Confidence Learning
 
-Always provide:
+---------------------------------------------------------
 
-Folder/FileName
+result_buffer.py
 
-↓
+Status:
+✔ Stable
 
-Complete updated source code
+Functions
 
-instead of partial snippets or patch blocks.
+✔ Buffer Samples
+✔ Batch Trigger
+✔ Clear Buffer
 
-Reason:
+---------------------------------------------------------
 
-- Prevent code divergence
-- Keep AI and local project synchronized
-- Reduce manual searching/editing
-- Ensure copy-and-replace workflow
+live/
+---------------------------------------------------------
 
-----------------------------------------------------
+manager.py
 
-Development Principle
+Status:
+✔ Stable
 
-Prefer complete files over partial code.
+Current
 
-Maintain one authoritative version of every source file.
+✔ Live Match Management
 
-====================================================
+Planned
+
+□ Adaptive Weight Reload
+□ Online Update Trigger
+
+---------------------------------------------------------
+
+database/
+---------------------------------------------------------
+
+football.db
+
+Status
+
+✔ Stable
+
+Current
+
+✔ Match Storage
+✔ Prediction Storage
+✔ Result Storage
+
+Planned
+
+□ Weight History
+□ Learning History
+□ Confidence History
+
+=========================================================
+CURRENT CAPABILITIES (V1.8)
+=========================================================
+
+Prediction
+
+✔ Elo
+✔ Poisson
+✔ Ensemble
+✔ Probability Output
+
+Betting
+
+✔ 1X2
+✔ Asian Handicap
+✔ Over/Under
+
+Evaluation
+
+✔ Historical Backtest
+✔ Prediction Storage
+
+Live
+
+✔ Match Monitoring
+✔ Result Collection
+
+=========================================================
+PLANNED V2.0 AI ADAPTIVE ENGINE
+=========================================================
+
+Adaptive Layer
+
+□ Online Learning
+
+□ Dynamic Fusion
+
+□ Dynamic Confidence
+
+□ Model Self Evaluation
+
+□ Adaptive Weight Update
+
+□ Reinforcement Learning Hook
+
+□ Weight Persistence
+
+□ Confidence Calibration
+
+=========================================================
+UPGRADE ROADMAP
+=========================================================
+
+Phase 1
+--------
+✔ Freeze Architecture
+
+Phase 2
+--------
+□ learning/weight_updater.py
+
+Phase 3
+--------
+□ ensemble/fusion.py
+
+Phase 4
+--------
+□ learning/feedback.py
+
+Phase 5
+--------
+□ live/manager.py
+
+Phase 6
+--------
+□ app/main.py
+
+=========================================================
+ENGINE PRINCIPLES
+=========================================================
+
+✔ Single Execution Pipeline
+
+✔ Modular Design
+
+✔ Backward Compatible
+
+✔ Statistical Core
+
+✔ Adaptive Extension Layer
+
+✔ Version Controlled
+
+=========================================================
+TARGET VERSION
+=========================================================
+
+Current
+
+V1.8 Stable
+
+Next
+
+V2.0 AI Adaptive Engine
+
+Long Term
+
+V2.5 Reinforcement Learning
+
+V3.0 Intelligent Prediction Engine
+
+=========================================================
 END OF SNAPSHOT
-====================================================
+=========================================================

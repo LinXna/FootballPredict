@@ -1,29 +1,48 @@
 class WeightUpdater:
     """
-    更新 Elo / Poisson / Fusion 权重
+    Stable reward-weighted bandit updater
     """
 
     def __init__(self):
         self.weights = {"elo": 0.5, "poisson": 0.5}
-
         self.lr = 0.02
 
     def update(self, pred, actual, reward):
 
-        target = [0, 0, 0]
-        target[actual] = 1
+        if not isinstance(pred, dict):
+            return self.weights
 
-        error_h = target[0] - pred["H"]
-        error_d = target[1] - pred["D"]
-        error_a = target[2] - pred["A"]
+        if actual not in {0, 1, 2}:
+            return self.weights
 
-        avg_error = (error_h + error_d + error_a) / 3
+        reward = float(reward)
 
-        # reward-driven update
-        self.weights["elo"] += self.lr * reward * avg_error
-        self.weights["poisson"] += self.lr * reward * avg_error
+        # model disagreement proxy (safe version)
+        probs = [
+            pred.get("H", 0.0),
+            pred.get("D", 0.0),
+            pred.get("A", 0.0),
+        ]
+
+        probs = [max(1e-9, min(float(p), 1.0)) for p in probs]
+
+        error = 1.0 - probs[actual]
+
+        # stable multiplicative update (no explosion)
+        self.weights["elo"] *= 1 + self.lr * reward * error
+        self.weights["poisson"] *= 1 + self.lr * reward * error
+
+        # clamp
+        for k in self.weights:
+            self.weights[k] = max(1e-3, self.weights[k])
 
         # normalize
         s = sum(self.weights.values())
-        for k in self.weights:
-            self.weights[k] /= s
+
+        if s <= 0:
+            self.weights = {"elo": 0.5, "poisson": 0.5}
+            return self.weights
+
+        self.weights = {k: v / s for k, v in self.weights.items()}
+
+        return self.weights

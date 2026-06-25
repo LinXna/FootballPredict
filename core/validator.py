@@ -1,33 +1,48 @@
+# core/validator.py
+
+from core.constants import Result
+
+
 def validate_match(m: dict):
-
-    # =========================
-    # V1-FREEZE: 类型检查
-    # =========================
     if not isinstance(m, dict):
-        raise ValueError("match 必须是 dict")
+        raise ValueError("match must be dict")
 
-    必要字段 = ["home", "away", "result", "odds"]
+    required = ["home", "away", "result", "odds"]
 
-    for f in 必要字段:
+    for f in required:
         if f not in m:
-            raise ValueError(f"缺少字段: {f}")
+            raise ValueError(f"missing field: {f}")
+
+    home = m["home"]
+    away = m["away"]
+
+    if not home or not away:
+        raise ValueError("home/away invalid")
 
     # =========================
-    # V1-FREEZE: result 标准化
+    # normalize result
     # =========================
     result = str(m["result"]).strip().upper()
 
-    if result not in ["H", "D", "A"]:
-        raise ValueError("result 必须是 H/D/A")
+    if result not in {r.value for r in Result}:
+        raise ValueError("result must be H/D/A")
 
     # =========================
-    # V1-FREEZE: odds 类型检查
+    # odds validation
     # =========================
-    if not isinstance(m["odds"], dict):
-        raise ValueError("odds 必须是 dict")
+    odds = m["odds"]
+
+    if not isinstance(odds, dict):
+        raise ValueError("odds must be dict")
 
     for k in ["H", "D", "A"]:
-        if k not in m["odds"]:
-            raise ValueError(f"缺少赔率字段: {k}")
+        if k not in odds:
+            raise ValueError(f"missing odds key: {k}")
+
+        if not isinstance(odds[k], (int, float)):
+            raise ValueError(f"invalid odds type: {k}")
+
+        if odds[k] <= 0:
+            raise ValueError(f"invalid odds value: {k}")
 
     return True

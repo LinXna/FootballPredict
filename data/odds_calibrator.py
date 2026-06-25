@@ -1,37 +1,32 @@
 def odds_to_prob(odds):
     """
-    data/odds_calibrator.py | V1-FREEZE
-    odds = {"H": 2.1, "D": 3.2, "A": 3.5}
+    Convert bookmaker odds to normalized probability
     """
 
-    # =========================
-    # V1-FREEZE: 安全转换 + 限幅
-    # =========================
+    if not isinstance(odds, dict):
+        return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+    required = ["H", "D", "A"]
+
     raw = {}
 
-    for k, v in odds.items():
+    for k in required:
 
-        # 防止非法输入
+        v = odds.get(k, 100.0)
+
         try:
             v = float(v)
-        except:
-            v = 1e9
+        except Exception:
+            v = 100.0
 
-        # V1-FREEZE: 合理赔率区间约束
-        v = max(v, 1.01)
-        v = min(v, 100.0)
+        # clamp odds
+        v = max(1.01, min(v, 100.0))
 
-        raw[k] = 1 / v
+        raw[k] = 1.0 / v
 
     total = sum(raw.values())
 
-    # =========================
-    # V1-FREEZE: 防止异常输入
-    # =========================
     if total <= 0:
         return {"H": 0.33, "D": 0.34, "A": 0.33}
 
-    # =========================
-    # V1-FREEZE: 去水归一化
-    # =========================
-    return {k: v / total for k, v in raw.items()}
+    return {k: raw[k] / total for k in required}

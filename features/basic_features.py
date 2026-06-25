@@ -1,20 +1,20 @@
 def build_features(match, team_stats):
 
-    # =========================
-    # V1-FREEZE: 安全读取match字段
-    # =========================
-    home = match.get("home", "")
-    away = match.get("away", "")
+    if not isinstance(match, dict):
+        return None
 
-    # =========================
-    # V1-FREEZE: 基础强度特征
-    # =========================
-    home_strength = team_stats.get(home, 1.0)
-    away_strength = team_stats.get(away, 1.0)
+    home = (match.get("home") or "").strip()
+    away = (match.get("away") or "").strip()
 
-    # =========================
-    # V1-FREEZE: 输出结构化特征
-    # =========================
+    if not home or not away:
+        return None
+
+    if not isinstance(team_stats, dict):
+        team_stats = {}
+
+    home_strength = float(team_stats.get(home, 1.0) or 1.0)
+    away_strength = float(team_stats.get(away, 1.0) or 1.0)
+
     return {
         "home_strength": home_strength,
         "away_strength": away_strength,

@@ -1,21 +1,25 @@
-# =====================================================
-# core/constants.py | V1 FINAL FREEZE
-# 系统基础常量层（禁止重复定义）
-# =====================================================
+# core/constants.py
 
+from enum import Enum
 
 # =========================
 # Match Fields
 # =========================
-HOME = "home"
-AWAY = "away"
-RESULT = "result"
-ODDS = "odds"
+
+
+class Field(str, Enum):
+    HOME = "home"
+    AWAY = "away"
+    RESULT = "result"
+    ODDS = "odds"
 
 
 # =========================
-# Odds Keys
+# Result Labels
 # =========================
-H = "H"
-D = "D"
-A = "A"
+
+
+class Result(str, Enum):
+    HOME_WIN = "H"
+    DRAW = "D"
+    AWAY_WIN = "A"

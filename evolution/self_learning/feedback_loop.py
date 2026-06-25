@@ -3,7 +3,7 @@ from evolution.self_learning.reward_engine import RewardEngine
 
 class FeedbackLoop:
     """
-    将比赛结果回流到系统
+    Safe feedback controller
     """
 
     def __init__(self, weight_updater):
@@ -12,8 +12,21 @@ class FeedbackLoop:
 
     def process(self, pred, actual, context=None):
 
-        reward = self.reward_engine.compute(pred, actual)
+        if not isinstance(pred, dict):
+            return 0.0
 
-        self.weight_updater.update(pred, actual, reward)
+        if actual not in {0, 1, 2}:
+            return 0.0
 
-        return reward
+        try:
+            reward = self.reward_engine.compute(pred, actual)
+
+            # safety clamp
+            reward = max(-1.0, min(1.0, float(reward)))
+
+            self.weight_updater.update(pred, actual, reward)
+
+            return reward
+
+        except Exception:
+            return 0.0

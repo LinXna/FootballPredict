@@ -1,16 +1,28 @@
 def normalize_match(match):
+    if not isinstance(match, dict):
+        return None
+
+    home = (match.get("home") or "").strip()
+    away = (match.get("away") or "").strip()
+
+    if not home or not away:
+        return None
+
+    result = match.get("result")
+
+    if result is None:
+        return None
+
+    result = str(result).strip().upper()
+
+    if result not in {"H", "D", "A"}:
+        return None
+
+    odds = match.get("odds")
+
     return {
-        # =========================
-        # V1-FREEZE: 基础字段标准化
-        # =========================
-        "home": match.get("home", ""),
-        "away": match.get("away", ""),
-        # =========================
-        # V1-FREEZE: result 标准化（关键）
-        # =========================
-        "result": str(match["result"]).strip().upper(),
-        # =========================
-        # V1-FREEZE: odds 安全兜底
-        # =========================
-        "odds": match.get("odds", {"H": 2.0, "D": 3.0, "A": 3.0}),
+        "home": home,
+        "away": away,
+        "result": result,
+        "odds": odds if isinstance(odds, dict) else {"H": 2.5, "D": 3.2, "A": 2.8},
     }

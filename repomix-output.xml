@@ -1,0 +1,4031 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+工程状态快照.txt
+app/api.py
+app/main.py
+app/run.py
+app/websocket.py
+Architecture.md
+core/constants.py
+core/pipeline.py
+core/schema.py
+core/validator.py
+data/match_normalizer.py
+data/odds_calibrator.py
+data/odds_normalizer.py
+data/real_matches.csv
+data/real_matches.py
+ensemble/fusion.py
+ensemble/market_fusion.py
+evaluation/backtest.py
+evaluation/benchmark.py
+evaluation/betting.py
+evaluation/metrics.py
+evaluation/value_engine.py
+evolution/calibrator.py
+evolution/drift_detector.py
+evolution/online_learner.py
+evolution/self_learning/feedback_loop.py
+evolution/self_learning/reward_engine.py
+evolution/self_learning/weight_updater.py
+evolution/weight_manager.py
+features/basic_features.py
+features/builder.py
+features/form.py
+features/h2h.py
+learning/critic.py
+learning/feedback.py
+learning/replay_buffer.py
+learning/result_buffer.py
+learning/reward_engine.py
+learning/weight_updater.py
+live/adjuster.py
+live/events.py
+live/manager.py
+live/pipeline.py
+live/predictor.py
+live/processor.py
+live/queue.py
+live/replay.py
+live/runtime.py
+live/snapshot.py
+live/state_store.py
+live/state.py
+live/ws_adapter.py
+models/elo_model.py
+models/poisson_model.py
+pyproject.toml
+README.md
+requirements.txt
+test_events.py
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="工程状态快照.txt">
+=========================================================
+⚽ FootballPredict ENGINE STATE SNAPSHOT
+=========================================================
+
+PROJECT
+---------------------------------------------------------
+Project Name : FootballPredict
+Current Stage: V1.8 Stable
+Next Target  : V2.0 AI Adaptive Engine
+Status       : Development
+Architecture : Single Execution Pipeline
+
+Repository
+---------------------------------------------------------
+Engine Version : V1.8
+Adaptive Layer : Planned (V2.0)
+Database        : SQLite
+Python          : 3.11+
+
+=========================================================
+SYSTEM ARCHITECTURE
+=========================================================
+
+                   app/main.py
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+    Prediction Pipeline          Live Manager
+        │                               │
+        ▼                               ▼
+ Feature Engineering            Live Match Control
+        │                               │
+        ▼                               ▼
+   Model Ensemble              Feedback Loop
+        │                               │
+        └──────────────┬────────────────┘
+                       ▼
+                 Result Output
+
+=========================================================
+CORE MODULE STATUS
+=========================================================
+
+app/
+---------------------------------------------------------
+main.py
+Status:
+✔ Stable
+
+Responsibilities:
+- System startup
+- Dependency initialization
+- Pipeline execution
+- Live mode startup
+
+---------------------------------------------------------
+
+core/
+---------------------------------------------------------
+
+pipeline.py
+Status:
+✔ Stable
+
+Responsibilities:
+- Prediction workflow
+- Feature generation
+- Ensemble execution
+
+---------------------------------------------------------
+
+features/
+---------------------------------------------------------
+
+Status:
+✔ Stable
+
+Current Features
+
+✔ Elo
+✔ Recent Form
+✔ Attack Rating
+✔ Defence Rating
+✔ Home Advantage
+✔ Goal Statistics
+✔ Historical Performance
+
+---------------------------------------------------------
+
+ensemble/
+---------------------------------------------------------
+
+fusion.py
+
+Status:
+✔ Stable
+▲ Dynamic Adaptive Fusion planned
+
+Current
+
+✔ Static Fusion
+
+Planned (V2.0)
+
+□ Dynamic Weight
+□ Confidence Adjustment
+□ Adaptive Fusion
+
+---------------------------------------------------------
+
+learning/
+---------------------------------------------------------
+
+feedback.py
+
+Status:
+✔ Basic Feedback Loop
+
+Current
+
+✔ Result Buffer
+✔ Batch Trigger
+
+Planned
+
+□ Online Learning
+□ Self Evaluation
+□ Adaptive Feedback
+
+---------------------------------------------------------
+
+weight_updater.py
+
+Status:
+△ Skeleton
+
+Current
+
+✔ Batch Interface
+
+Pending
+
+□ Weight Update
+□ Weight Persistence
+□ Adaptive Learning
+□ Confidence Learning
+
+---------------------------------------------------------
+
+result_buffer.py
+
+Status:
+✔ Stable
+
+Functions
+
+✔ Buffer Samples
+✔ Batch Trigger
+✔ Clear Buffer
+
+---------------------------------------------------------
+
+live/
+---------------------------------------------------------
+
+manager.py
+
+Status:
+✔ Stable
+
+Current
+
+✔ Live Match Management
+
+Planned
+
+□ Adaptive Weight Reload
+□ Online Update Trigger
+
+---------------------------------------------------------
+
+database/
+---------------------------------------------------------
+
+football.db
+
+Status
+
+✔ Stable
+
+Current
+
+✔ Match Storage
+✔ Prediction Storage
+✔ Result Storage
+
+Planned
+
+□ Weight History
+□ Learning History
+□ Confidence History
+
+=========================================================
+CURRENT CAPABILITIES (V1.8)
+=========================================================
+
+Prediction
+
+✔ Elo
+✔ Poisson
+✔ Ensemble
+✔ Probability Output
+
+Betting
+
+✔ 1X2
+✔ Asian Handicap
+✔ Over/Under
+
+Evaluation
+
+✔ Historical Backtest
+✔ Prediction Storage
+
+Live
+
+✔ Match Monitoring
+✔ Result Collection
+
+=========================================================
+PLANNED V2.0 AI ADAPTIVE ENGINE
+=========================================================
+
+Adaptive Layer
+
+□ Online Learning
+
+□ Dynamic Fusion
+
+□ Dynamic Confidence
+
+□ Model Self Evaluation
+
+□ Adaptive Weight Update
+
+□ Reinforcement Learning Hook
+
+□ Weight Persistence
+
+□ Confidence Calibration
+
+=========================================================
+UPGRADE ROADMAP
+=========================================================
+
+Phase 1
+--------
+✔ Freeze Architecture
+
+Phase 2
+--------
+□ learning/weight_updater.py
+
+Phase 3
+--------
+□ ensemble/fusion.py
+
+Phase 4
+--------
+□ learning/feedback.py
+
+Phase 5
+--------
+□ live/manager.py
+
+Phase 6
+--------
+□ app/main.py
+
+=========================================================
+ENGINE PRINCIPLES
+=========================================================
+
+✔ Single Execution Pipeline
+
+✔ Modular Design
+
+✔ Backward Compatible
+
+✔ Statistical Core
+
+✔ Adaptive Extension Layer
+
+✔ Version Controlled
+
+=========================================================
+TARGET VERSION
+=========================================================
+
+Current
+
+V1.8 Stable
+
+Next
+
+V2.0 AI Adaptive Engine
+
+Long Term
+
+V2.5 Reinforcement Learning
+
+V3.0 Intelligent Prediction Engine
+
+=========================================================
+END OF SNAPSHOT
+=========================================================
+</file>
+
+<file path="learning/critic.py">
+class ModelCritic:
+    """
+    Evaluates model quality over time
+    """
+
+    def score(self, history):
+
+        if not history:
+            return 0.5
+
+        correct = sum(1 for h in history if h["correct"])
+        return correct / len(history)
+</file>
+
+<file path="learning/replay_buffer.py">
+class ReplayBuffer:
+    """
+    Stores past matches for reinforcement learning
+    """
+
+    def __init__(self, max_size=500):
+
+        self.buffer = []
+        self.max_size = max_size
+
+    def add(self, sample):
+
+        self.buffer.append(sample)
+
+        if len(self.buffer) > self.max_size:
+            self.buffer.pop(0)
+
+    def sample(self, batch_size=32):
+
+        return self.buffer[-batch_size:]
+</file>
+
+<file path="learning/reward_engine.py">
+class RewardEngine:
+    """
+    V2.1 Reward System
+    ------------------
+    Convert prediction error into learning signal
+    """
+
+    def compute(self, prediction, actual):
+
+        pred_label = max(
+            prediction["probabilities"], key=prediction["probabilities"].get
+        )
+
+        reward = 1.0 if pred_label == actual else -1.0
+
+        confidence = prediction.get("confidence", 0.5)
+
+        # confidence-weighted reward
+        return reward * confidence
+</file>
+
+<file path=".gitignore">
+__pycache__/
+*.pyc
+</file>
+
+<file path="Architecture.md">
+# V1.7 Architecture.md
+
+## 1. 文档目的（Architecture Baseline）
+
+本文档定义 V1.7 的唯一架构基线（Architecture Baseline）。
+
+所有后续开发、代码评审、重构均以本文档为准。
+
+如果代码与本文档冲突，应优先修改代码，而不是修改架构。
+
+---
+
+# 2. Architecture Goals
+
+V1.7 目标：
+
+* 单场比赛运行时隔离（Match Runtime Isolation）
+* 多比赛并发（Multi Match）
+* 实时预测（Live Prediction）
+* WebSocket Streaming
+* HTTP API
+* Replay 能力
+* 可扩展状态存储（State Store）
+
+---
+
+# 3. Architecture Layers
+
+系统采用五层架构。
+
+```
+Client
+    │
+    ▼
+Application Layer
+(app/)
+    │
+    ▼
+Management Layer
+(LiveManager)
+    │
+    ▼
+Runtime Layer
+(MatchRuntime)
+    │
+    ▼
+Business Layer
+(Processor / Predictor / Adjuster)
+    │
+    ▼
+Core Layer
+(Pipeline / Model)
+```
+
+依赖方向只能自上而下。
+
+禁止反向依赖。
+
+---
+
+# 4. Module Responsibilities
+
+## app/
+
+职责：
+
+* FastAPI
+* WebSocket
+* HTTP
+* Dependency Injection
+* 生命周期启动
+
+禁止：
+
+* 修改 MatchState
+* 调 Predictor
+* 调 Processor
+* 调 Pipeline
+
+---
+
+## LiveManager
+
+职责：
+
+* 管理多个 MatchRuntime
+* 创建比赛
+* 删除比赛
+* 路由事件
+* 生命周期管理
+
+禁止：
+
+* 保存 MatchState
+* 预测
+* 更新事件
+* Feature Engineering
+
+---
+
+## MatchRuntime
+
+职责：
+
+* 单场比赛运行时
+* 保存本场状态
+* 驱动事件处理
+* 驱动预测流程
+
+禁止：
+
+* 管理其他比赛
+* HTTP
+* WebSocket
+
+---
+
+## EventProcessor
+
+职责：
+
+* 处理 Event
+* 更新 MatchState
+
+禁止：
+
+* 调 Pipeline
+* 管理 Runtime
+
+---
+
+## LivePredictor
+
+职责：
+
+* Feature
+* 调 Core Pipeline
+* 返回预测结果
+
+禁止：
+
+* 修改 MatchState
+
+---
+
+## Core Pipeline
+
+职责：
+
+* 模型推理
+* Feature → Probability
+
+禁止：
+
+* 保存比赛状态
+* WebSocket
+* Event
+
+---
+
+# 5. Dependency Rules
+
+允许：
+
+```
+app
+ ↓
+LiveManager
+ ↓
+MatchRuntime
+ ↓
+Processor
+ ↓
+Predictor
+ ↓
+Core Pipeline
+```
+
+禁止：
+
+```
+app
+ ↓
+Pipeline
+```
+
+禁止：
+
+```
+Processor
+ ↓
+Manager
+```
+
+禁止：
+
+```
+Pipeline
+ ↓
+Runtime
+```
+
+禁止：
+
+```
+Predictor
+ ↓
+State Mutation
+```
+
+---
+
+# 6. Match Lifecycle
+
+```
+create_match()
+
+↓
+
+MatchRuntime.start()
+
+↓
+
+process_event()
+
+↓
+
+predict()
+
+↓
+
+publish()
+
+↓
+
+remove_match()
+```
+
+MatchRuntime 生命周期由 LiveManager 管理。
+
+---
+
+# 7. Project Structure
+
+```
+app/
+    run.py
+    api.py
+    websocket.py
+    dependencies.py
+
+core/
+    pipeline.py
+    feature.py
+    model.py
+
+live/
+    manager.py
+    runtime.py
+    pipeline.py
+    predictor.py
+    processor.py
+    adjuster.py
+    queue.py
+    state.py
+    events.py
+    replay.py
+    state_store.py
+
+tests/
+```
+
+---
+
+# 8. Compatibility Decision
+
+当前保留：
+
+```
+live/pipeline.py
+```
+
+原因：
+
+* 避免大规模 import 修改。
+* 保持 V1.7 工程稳定。
+
+当前定位：
+
+LivePipeline 为 Facade（外观层）。
+
+职责：
+
+* 对外提供统一 Live 接口。
+* 内部调用 LiveManager。
+
+禁止：
+
+* 保存 MatchState。
+* 创建 Predictor。
+* 创建 Processor。
+* 保存 Runtime。
+
+未来（V2.0）评估是否重命名为：
+
+```
+live/engine.py
+```
+
+该变更不属于 V1.7 范围。
+
+---
+
+# 9. Code Review Checklist
+
+每次提交必须检查：
+
+* 是否违反依赖方向？
+* 是否跨层调用？
+* 是否新增状态？
+* 是否新增生命周期？
+* 是否绕过 LiveManager？
+* 是否修改了 MatchRuntime 边界？
+* 是否修改了 Pipeline 职责？
+
+任一项为"是"，必须重新评审。
+
+---
+
+# 10. Architecture Freeze
+
+自 V1.7 起：
+
+未经 Architecture Review，
+
+禁止：
+
+* 新增层级
+* 修改模块职责
+* 修改依赖方向
+* 引入新的 Runtime
+* 引入新的 Pipeline
+
+所有架构调整必须先更新 Architecture.md，再进入代码实现。
+</file>
+
+<file path="core/constants.py">
+# =====================================================
+# core/constants.py | V1 FINAL FREEZE
+# 系统基础常量层（禁止重复定义）
+# =====================================================
+
+
+# =========================
+# Match Fields
+# =========================
+HOME = "home"
+AWAY = "away"
+RESULT = "result"
+ODDS = "odds"
+
+
+# =========================
+# Odds Keys
+# =========================
+H = "H"
+D = "D"
+A = "A"
+</file>
+
+<file path="core/schema.py">
+from typing import TypedDict
+
+
+class Match(TypedDict):
+    home: str
+    away: str
+
+    # V1-FREEZE: must be one of ["H", "D", "A"] (upper-case only)
+    result: str
+
+    # V1-FREEZE: must contain keys {"H","D","A"} with float odds
+    odds: dict  # {"H": float, "D": float, "A": float}
+</file>
+
+<file path="core/validator.py">
+def validate_match(m: dict):
+
+    # =========================
+    # V1-FREEZE: 类型检查
+    # =========================
+    if not isinstance(m, dict):
+        raise ValueError("match 必须是 dict")
+
+    必要字段 = ["home", "away", "result", "odds"]
+
+    for f in 必要字段:
+        if f not in m:
+            raise ValueError(f"缺少字段: {f}")
+
+    # =========================
+    # V1-FREEZE: result 标准化
+    # =========================
+    result = str(m["result"]).strip().upper()
+
+    if result not in ["H", "D", "A"]:
+        raise ValueError("result 必须是 H/D/A")
+
+    # =========================
+    # V1-FREEZE: odds 类型检查
+    # =========================
+    if not isinstance(m["odds"], dict):
+        raise ValueError("odds 必须是 dict")
+
+    for k in ["H", "D", "A"]:
+        if k not in m["odds"]:
+            raise ValueError(f"缺少赔率字段: {k}")
+
+    return True
+</file>
+
+<file path="data/match_normalizer.py">
+def normalize_match(match):
+    return {
+        # =========================
+        # V1-FREEZE: 基础字段标准化
+        # =========================
+        "home": match.get("home", ""),
+        "away": match.get("away", ""),
+        # =========================
+        # V1-FREEZE: result 标准化（关键）
+        # =========================
+        "result": str(match["result"]).strip().upper(),
+        # =========================
+        # V1-FREEZE: odds 安全兜底
+        # =========================
+        "odds": match.get("odds", {"H": 2.0, "D": 3.0, "A": 3.0}),
+    }
+</file>
+
+<file path="data/odds_calibrator.py">
+def odds_to_prob(odds):
+    """
+    data/odds_calibrator.py | V1-FREEZE
+    odds = {"H": 2.1, "D": 3.2, "A": 3.5}
+    """
+
+    # =========================
+    # V1-FREEZE: 安全转换 + 限幅
+    # =========================
+    raw = {}
+
+    for k, v in odds.items():
+
+        # 防止非法输入
+        try:
+            v = float(v)
+        except:
+            v = 1e9
+
+        # V1-FREEZE: 合理赔率区间约束
+        v = max(v, 1.01)
+        v = min(v, 100.0)
+
+        raw[k] = 1 / v
+
+    total = sum(raw.values())
+
+    # =========================
+    # V1-FREEZE: 防止异常输入
+    # =========================
+    if total <= 0:
+        return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+    # =========================
+    # V1-FREEZE: 去水归一化
+    # =========================
+    return {k: v / total for k, v in raw.items()}
+</file>
+
+<file path="data/odds_normalizer.py">
+def normalize_odds(raw_odds):
+
+    # =========================
+    # V1-FREEZE: 安全转换函数
+    # =========================
+    def safe_float(x):
+        try:
+            return float(x)
+        except:
+            return 1e9
+
+    def clamp(v):
+        v = max(v, 1.01)
+        v = min(v, 100.0)
+        return v
+
+    return {
+        # =========================
+        # V1-FREEZE: 赔率标准化 + 防御
+        # =========================
+        "H": clamp(safe_float(raw_odds.get("H", 2.0))),
+        "D": clamp(safe_float(raw_odds.get("D", 3.0))),
+        "A": clamp(safe_float(raw_odds.get("A", 3.0))),
+    }
+</file>
+
+<file path="data/real_matches.csv">
+home,away,home_goals,away_goals,odds_h,odds_d,odds_a
+TeamA,TeamB,2,1,2.10,3.20,3.50
+</file>
+
+<file path="data/real_matches.py">
+import csv
+from data.match_normalizer import normalize_match
+from data.odds_normalizer import normalize_odds
+
+
+def load_real_matches(path="data/real_matches.csv"):
+    matches = []
+
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+
+            # =========================
+            # V1-FREEZE: 安全解析比分
+            # =========================
+            try:
+                hg = int(float(row["home_goals"]))
+                ag = int(float(row["away_goals"]))
+            except:
+                continue
+
+            # =========================
+            # V1-FREEZE: 结果推导
+            # =========================
+            if hg > ag:
+                result = "H"
+            elif hg < ag:
+                result = "A"
+            else:
+                result = "D"
+
+            # =========================
+            # V1-FREEZE: match标准化
+            # =========================
+            match = normalize_match(
+                {
+                    "home": row.get("home", "").strip(),
+                    "away": row.get("away", "").strip(),
+                    "result": result,
+                }
+            )
+
+            # =========================
+            # V1-FREEZE: odds安全接入
+            # =========================
+            raw_odds = {
+                "H": row.get("odds_h", 2.0),
+                "D": row.get("odds_d", 3.0),
+                "A": row.get("odds_a", 3.0),
+            }
+
+            odds = normalize_odds(raw_odds)
+
+            match["odds"] = odds
+
+            matches.append(match)
+
+    return matches
+</file>
+
+<file path="ensemble/fusion.py">
+import json
+import os
+
+
+class LearnedFusion:
+    """
+    V2.0 AI Adaptive Fusion Engine
+
+    Upgrade:
+    ✔ Dynamic weight injection
+    ✔ Online learning compatible
+    ✔ Stable V1.8 heuristics preserved
+    ✔ No static coupling with trainer
+    """
+
+    def __init__(self, weight_file="data/fusion_weights.json"):
+
+        self.weight_file = weight_file
+
+        # 默认权重（fallback）
+        self.weights = {"elo": 0.50, "poisson": 0.50}
+
+        self._load()
+
+    # =========================================================
+    # Load / Save
+    # =========================================================
+
+    def _load(self):
+
+        if os.path.exists(self.weight_file):
+
+            try:
+                with open(self.weight_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                if isinstance(data, dict):
+                    self.weights = {
+                        "elo": float(data.get("elo", 0.5)),
+                        "poisson": float(data.get("poisson", 0.5)),
+                    }
+
+            except Exception:
+                pass
+
+    def _save(self):
+
+        os.makedirs(os.path.dirname(self.weight_file), exist_ok=True)
+
+        with open(self.weight_file, "w", encoding="utf-8") as f:
+            json.dump(self.weights, f, indent=4)
+
+    # =========================================================
+    # Public API
+    # =========================================================
+
+    def get_weights(self):
+        return dict(self.weights)
+
+    def set_weights(self, weights: dict):
+
+        if not weights:
+            return
+
+        if "elo" in weights:
+            self.weights["elo"] = float(weights["elo"])
+
+        if "poisson" in weights:
+            self.weights["poisson"] = float(weights["poisson"])
+
+        self._normalize()
+        self._save()
+
+    # =========================================================
+    # Core Fusion (V2.0)
+    # =========================================================
+
+    def fuse(self, elo_pred, poisson_pred):
+
+        result = {}
+
+        for k in ["H", "D", "A"]:
+
+            if k not in elo_pred or k not in poisson_pred:
+                continue
+
+            result[k] = (
+                self.weights["elo"] * elo_pred[k]
+                + self.weights["poisson"] * poisson_pred[k]
+            )
+
+        # =====================================================
+        # V1.8 Stability Patch (preserved)
+        # =====================================================
+
+        if "H" in result and "A" in result:
+
+            gap = result["H"] - result["A"]
+
+            if abs(gap) < 0.015:
+
+                result["H"] *= 1.03
+                result["A"] *= 1.03
+                result["D"] *= 0.92
+
+        # Draw suppression heuristic (legacy but stable)
+        if "D" in result:
+            result["D"] *= 0.92
+
+        # =====================================================
+        # Stability normalization
+        # =====================================================
+
+        for k in result:
+            result[k] = max(result[k], 1e-9)
+
+        total = sum(result.values())
+
+        return {
+            "H": result["H"] / total,
+            "D": result["D"] / total,
+            "A": result["A"] / total,
+        }
+
+    # =========================================================
+    # Normalization
+    # =========================================================
+
+    def _normalize(self):
+
+        self.weights["elo"] = max(0.05, self.weights["elo"])
+        self.weights["poisson"] = max(0.05, self.weights["poisson"])
+
+        total = self.weights["elo"] + self.weights["poisson"]
+
+        self.weights["elo"] /= total
+        self.weights["poisson"] /= total
+
+    # =========================================================
+    # Debug
+    # =========================================================
+
+    def __repr__(self):
+
+        return f"LearnedFusion(weights={self.weights})"
+</file>
+
+<file path="ensemble/market_fusion.py">
+class MarketFusion:
+    def __init__(self, alpha=0.7):
+
+        # =========================
+        # V1-FREEZE: alpha范围约束
+        # =========================
+        self.alpha = max(0.0, min(1.0, alpha))
+
+    def fuse(self, model_prob, market_prob):
+
+        result = {}
+
+        for k in ["H", "D", "A"]:
+
+            # =========================
+            # V1-FREEZE: 输入安全检查
+            # =========================
+            if k not in model_prob or k not in market_prob:
+                continue
+
+            result[k] = self.alpha * model_prob[k] + (1 - self.alpha) * market_prob[k]
+
+        # =========================
+        # V1-FREEZE: 数值稳定性
+        # =========================
+        for k in result:
+            result[k] = max(result[k], 1e-9)
+
+        total = sum(result.values())
+
+        # =========================
+        # V1-FREEZE: 防止异常归一化
+        # =========================
+        if total <= 0:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+        return {k: v / total for k, v in result.items()}
+</file>
+
+<file path="evaluation/backtest.py">
+from evaluation.metrics import logloss, brier_score
+
+
+class Backtester:
+    def __init__(self, pipeline):
+        # =========================
+        # V1-FREEZE: 统一评估入口
+        # =========================
+        self.pipeline = pipeline
+
+    def run(self, matches):
+
+        # =========================
+        # 1️⃣ 累计指标
+        # =========================
+        total_logloss = 0.0
+        total_brier = 0.0
+        correct = 0
+
+        valid_n = 0
+
+        # =========================
+        # 2️⃣ 遍历比赛
+        # =========================
+        for match in matches:
+
+            # =========================
+            # V1-FREEZE: 主预测入口（不可绕过fusion）
+            # =========================
+            pred = self.pipeline.predict(
+                match["home"], match["away"], odds=match["odds"]
+            )
+
+            actual = str(match["result"]).strip().upper()
+
+            # =========================
+            # V1-FREEZE: 数据合法性检查
+            # =========================
+            if not pred:
+                continue
+
+            if not all(k in pred for k in ["H", "D", "A"]):
+                continue
+
+            # =========================
+            # 3️⃣ 指标计算
+            # =========================
+            total_logloss += logloss(pred, actual)
+            total_brier += brier_score(pred, actual)
+
+            pred_label = str(max(pred, key=pred.get)).strip().upper()
+
+            if pred_label == actual:
+                correct += 1
+
+            valid_n += 1
+
+        # =========================
+        # 4️⃣ 防止空数据
+        # =========================
+        if valid_n == 0:
+            return {"accuracy": 0, "logloss": 0, "brier": 0}, []
+
+        # =========================
+        # 5️⃣ 输出结果（V1锁定格式）
+        # =========================
+        return {
+            "accuracy": correct / valid_n,
+            "logloss": total_logloss / valid_n,
+            "brier": total_brier / valid_n,
+        }, []
+</file>
+
+<file path="evaluation/benchmark.py">
+from evaluation.metrics import logloss, brier_score
+
+
+class ModelBenchmark:
+
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+
+    def run(self, matches):
+
+        models = {
+            "elo": lambda m: self.pipeline.predict_raw(m["home"], m["away"]),
+            "poisson": lambda m: self.pipeline.predict_poisson(m["home"], m["away"]),
+            "fusion": lambda m: self.pipeline.predict_fusion(m["home"], m["away"]),
+            # =========================
+            # V1-FREEZE: market is pipeline mode
+            # =========================
+            "market": lambda m: self.pipeline.predict(
+                m["home"], m["away"], odds=m["odds"]
+            ),
+        }
+
+        results = {name: {"logloss": 0, "brier": 0, "count": 0} for name in models}
+
+        for m in matches:
+
+            actual = str(m["result"]).strip().upper()
+
+            for name, fn in models.items():
+
+                pred = fn(m)
+
+                results[name]["logloss"] += logloss(pred, actual)
+                results[name]["brier"] += brier_score(pred, actual)
+                results[name]["count"] += 1
+
+        for name in results:
+
+            c = results[name]["count"]
+
+            if c == 0:
+                continue
+
+            results[name]["logloss"] /= c
+            results[name]["brier"] /= c
+
+        return results
+</file>
+
+<file path="evaluation/betting.py">
+class BettingEngine:
+    def __init__(self, bankroll=1000):
+
+        # =========================
+        # V1-FREEZE: bankroll初始化
+        # =========================
+        self.bankroll = bankroll
+        self.init = bankroll
+
+    def kelly(self, p, odds):
+
+        b = odds - 1
+
+        # =========================
+        # V1-FREEZE: 防止非法赔率
+        # =========================
+        if b <= 0:
+            return 0
+
+        q = 1 - p
+        return max(0, (b * p - q) / b)
+
+    def run(self, matches, pipeline):
+
+        for m in matches:
+
+            # =========================
+            # V1-FREEZE: 统一预测入口
+            # =========================
+            pred = pipeline.predict(m["home"], m["away"], odds=m["odds"])
+
+            if not pred:
+                continue
+
+            if not all(k in pred for k in ["H", "D", "A"]):
+                continue
+
+            best = max(pred, key=pred.get)
+
+            # =========================
+            # V1-FREEZE: 概率裁剪
+            # =========================
+            p = max(0.0001, min(0.9999, pred[best]))
+
+            # =========================
+            # V1-FREEZE: odds安全读取
+            # =========================
+            o = float(m["odds"].get(best, 2.0))
+            o = max(o, 1.01)
+
+            f = self.kelly(p, o)
+
+            stake = self.bankroll * f
+
+            # =========================
+            # V1-FREEZE: 风险控制（10% cap）
+            # =========================
+            stake = min(stake, self.bankroll * 0.1)
+
+            if m["result"] == best:
+                self.bankroll += stake * (o - 1)
+            else:
+                self.bankroll -= stake
+
+            # =========================
+            # V1-FREEZE: 防止负值爆炸
+            # =========================
+            self.bankroll = max(0, self.bankroll)
+
+        return {
+            "ROI": (self.bankroll - self.init) / self.init,
+            "final_bankroll": self.bankroll,
+        }
+</file>
+
+<file path="evaluation/metrics.py">
+import math
+
+
+def logloss(pred, actual):
+
+    # =========================
+    # V1-FREEZE: 安全读取
+    # =========================
+    p = pred.get(actual, 1e-15)
+
+    # =========================
+    # V1-FREEZE: 概率裁剪
+    # =========================
+    p = min(max(p, 1e-15), 1 - 1e-15)
+
+    return -math.log(p)
+
+
+def brier_score(pred, actual):
+
+    # =========================
+    # V1-FREEZE: 结构防御
+    # =========================
+    if not all(k in pred for k in ["H", "D", "A"]):
+        return 1.0
+
+    score = 0.0
+
+    for k in ["H", "D", "A"]:
+        y = 1 if k == actual else 0
+        score += (pred[k] - y) ** 2
+
+    return score
+
+
+def accuracy(pred, actual):
+
+    # =========================
+    # V1-FREEZE: 安全判断
+    # =========================
+    if not pred:
+        return False
+
+    return max(pred, key=pred.get) == actual
+</file>
+
+<file path="evaluation/value_engine.py">
+class ValueBetEngine:
+    def __init__(self, min_ev=0.02):
+
+        # =========================
+        # V1-FREEZE: EV阈值
+        # =========================
+        self.min_ev = min_ev
+
+    def compute_ev(self, prob, odds):
+
+        # =========================
+        # V1-FREEZE: EV定义
+        # =========================
+        return prob * odds - 1
+
+    def find_value_bets(self, pred, odds_map):
+
+        value_bets = []
+
+        for k in ["H", "D", "A"]:
+
+            # =========================
+            # V1-FREEZE: 输入防御
+            # =========================
+            if k not in pred or k not in odds_map:
+                continue
+
+            # =========================
+            # V1-FREEZE: 数值稳定化
+            # =========================
+            p = min(max(pred[k], 1e-9), 1 - 1e-9)
+            o = max(float(odds_map[k]), 1.01)
+
+            ev = self.compute_ev(p, o)
+
+            if ev > self.min_ev:
+                value_bets.append({"outcome": k, "prob": p, "odds": o, "ev": ev})
+
+        # =========================
+        # V1-FREEZE: 排序输出
+        # =========================
+        return sorted(value_bets, key=lambda x: x["ev"], reverse=True)
+</file>
+
+<file path="evolution/calibrator.py">
+import numpy as np
+
+
+class Calibrator:
+    """
+    概率校准（Platt Scaling 简化版）
+    """
+
+    def calibrate(self, prob):
+        """
+        prob: {"H":, "D":, "A":}
+        """
+
+        values = np.array(list(prob.values()))
+
+        # soft calibration
+        values = np.power(values, 1.2)
+
+        values = values / np.sum(values)
+
+        return {"H": float(values[0]), "D": float(values[1]), "A": float(values[2])}
+</file>
+
+<file path="evolution/drift_detector.py">
+import numpy as np
+
+
+class DriftDetector:
+    """
+    检测模型输出是否发生分布漂移
+    """
+
+    def __init__(self, window_size=50):
+        self.window_size = window_size
+        self.history = []
+
+    def update(self, prob):
+        self.history.append(prob)
+
+        if len(self.history) > self.window_size:
+            self.history.pop(0)
+
+    def detect(self):
+        """
+        简化版 drift detection：
+        计算方差变化
+        """
+
+        if len(self.history) < self.window_size:
+            return False
+
+        arr = np.array(self.history)
+
+        var = np.var(arr, axis=0)
+
+        # 简单阈值
+        return np.mean(var) > 0.02
+</file>
+
+<file path="evolution/online_learner.py">
+class OnlineLearner:
+    """
+    基于比赛结果进行轻量权重调整
+    """
+
+    def __init__(self):
+        self.lr = 0.01
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+
+    def update(self, pred, actual):
+        """
+        pred: {"H":, "D":, "A":}
+        actual: result index (0/1/2)
+        """
+
+        target = [0, 0, 0]
+        target[actual] = 1
+
+        for i, key in enumerate(["H", "D", "A"]):
+            error = target[i] - pred[key]
+
+            self.weights["elo"] += self.lr * error
+            self.weights["poisson"] += self.lr * error
+
+        # normalize
+        s = sum(self.weights.values())
+        for k in self.weights:
+            self.weights[k] /= s
+</file>
+
+<file path="evolution/self_learning/feedback_loop.py">
+from evolution.self_learning.reward_engine import RewardEngine
+
+
+class FeedbackLoop:
+    """
+    将比赛结果回流到系统
+    """
+
+    def __init__(self, weight_updater):
+        self.reward_engine = RewardEngine()
+        self.weight_updater = weight_updater
+
+    def process(self, pred, actual, context=None):
+
+        reward = self.reward_engine.compute(pred, actual)
+
+        self.weight_updater.update(pred, actual, reward)
+
+        return reward
+</file>
+
+<file path="evolution/self_learning/reward_engine.py">
+class RewardEngine:
+    """
+    计算预测质量（reward signal）
+    """
+
+    def compute(self, pred, actual):
+        """
+        pred: {"H":, "D":, "A":}
+        actual: 0/1/2
+        """
+
+        probs = [pred["H"], pred["D"], pred["A"]]
+
+        # log loss style reward
+        return -1.0 * (1 - probs[actual])
+</file>
+
+<file path="evolution/self_learning/weight_updater.py">
+class WeightUpdater:
+    """
+    更新 Elo / Poisson / Fusion 权重
+    """
+
+    def __init__(self):
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+
+        self.lr = 0.02
+
+    def update(self, pred, actual, reward):
+
+        target = [0, 0, 0]
+        target[actual] = 1
+
+        error_h = target[0] - pred["H"]
+        error_d = target[1] - pred["D"]
+        error_a = target[2] - pred["A"]
+
+        avg_error = (error_h + error_d + error_a) / 3
+
+        # reward-driven update
+        self.weights["elo"] += self.lr * reward * avg_error
+        self.weights["poisson"] += self.lr * reward * avg_error
+
+        # normalize
+        s = sum(self.weights.values())
+        for k in self.weights:
+            self.weights[k] /= s
+</file>
+
+<file path="evolution/weight_manager.py">
+class WeightManager:
+    """
+    控制 ensemble 权重动态变化
+    """
+
+    def __init__(self):
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+
+    def update(self, new_weights):
+        self.weights = new_weights
+
+    def get(self):
+        return self.weights
+</file>
+
+<file path="features/basic_features.py">
+def build_features(match, team_stats):
+
+    # =========================
+    # V1-FREEZE: 安全读取match字段
+    # =========================
+    home = match.get("home", "")
+    away = match.get("away", "")
+
+    # =========================
+    # V1-FREEZE: 基础强度特征
+    # =========================
+    home_strength = team_stats.get(home, 1.0)
+    away_strength = team_stats.get(away, 1.0)
+
+    # =========================
+    # V1-FREEZE: 输出结构化特征
+    # =========================
+    return {
+        "home_strength": home_strength,
+        "away_strength": away_strength,
+        "strength_diff": home_strength - away_strength,
+    }
+</file>
+
+<file path="features/builder.py">
+from features.form import FormFeature
+from features.h2h import H2HFeature
+
+
+class FeatureBuilder:
+
+    def __init__(self):
+
+        # =========================
+        # V1-FREEZE: 子特征模块
+        # =========================
+        self.form = FormFeature(window=5)
+        self.h2h = H2HFeature()
+
+    def train_update(self, match):
+
+        # =========================
+        # V1-FREEZE: 防御更新
+        # =========================
+        if not match:
+            return
+
+        self.form.update(match)
+        self.h2h.update(match)
+
+    def build(self, home, away):
+
+        # =========================
+        # V1-FREEZE: form特征
+        # =========================
+        home_form = self.form.get_form(home) or 1.0
+        away_form = self.form.get_form(away) or 1.0
+
+        # =========================
+        # V1-FREEZE: 对战特征
+        # =========================
+        h2h = self.h2h.get_h2h(home, away) or 0.5
+
+        # =========================
+        # V1-FREEZE: feature contract输出
+        # =========================
+        return {
+            "home_form": home_form,
+            "away_form": away_form,
+            "h2h": h2h,
+        }
+</file>
+
+<file path="features/form.py">
+from collections import deque, defaultdict
+
+
+class FormFeature:
+
+    def __init__(self, window=5):
+
+        # =========================
+        # V1-FREEZE: rolling window form tracking
+        # =========================
+        self.window = window
+        self.history = defaultdict(lambda: deque(maxlen=window))
+
+    def update(self, match):
+
+        # =========================
+        # V1-FREEZE: safe field access
+        # =========================
+        home = match.get("home")
+        away = match.get("away")
+        result = str(match.get("result", "")).strip().upper()
+
+        if not home or not away or not result:
+            return
+
+        # =========================
+        # V1-FREEZE: form encoding
+        # =========================
+        if result == "H":
+            self.history[home].append(1)
+            self.history[away].append(0)
+
+        elif result == "A":
+            self.history[home].append(0)
+            self.history[away].append(1)
+
+        else:
+            self.history[home].append(0.5)
+            self.history[away].append(0.5)
+
+    def get_form(self, team):
+
+        # =========================
+        # V1-FREEZE: cold start handling
+        # =========================
+        h = self.history.get(team)
+
+        if not h:
+            return 0.5
+
+        return sum(h) / len(h)
+</file>
+
+<file path="features/h2h.py">
+from collections import defaultdict
+
+
+class H2HFeature:
+
+    def __init__(self):
+
+        # =========================
+        # V1-FREEZE: head-to-head统计
+        # =========================
+        self.record = defaultdict(lambda: {"H": 0, "D": 0, "A": 0, "total": 0})
+
+    def update(self, match):
+
+        # =========================
+        # V1-FREEZE: 安全读取
+        # =========================
+        home = match.get("home")
+        away = match.get("away")
+        result = str(match.get("result", "")).strip().upper()
+
+        if not home or not away or not result:
+            return
+
+        # =========================
+        # V1-FREEZE: directional key
+        # =========================
+        key = (home, away)
+
+        if result == "H":
+            self.record[key]["H"] += 1
+
+        elif result == "A":
+            self.record[key]["A"] += 1
+
+        else:
+            self.record[key]["D"] += 1
+
+        self.record[key]["total"] += 1
+
+    def get_h2h(self, home, away):
+
+        # =========================
+        # V1-FREEZE: query key
+        # =========================
+        key = (home, away)
+        r = self.record[key]
+
+        if r["total"] == 0:
+            # V1-FREEZE: weak prior (avoid full symmetry)
+            return {"H": 0.34, "D": 0.33, "A": 0.33}
+
+        return {
+            "H": r["H"] / r["total"],
+            "D": r["D"] / r["total"],
+            "A": r["A"] / r["total"],
+        }
+</file>
+
+<file path="learning/feedback.py">
+from learning.result_buffer import ResultBuffer
+
+
+class FeedbackLoop:
+    """
+    V2.0 AI Adaptive Feedback System
+
+    Upgrade Goals:
+    ✔ 防重复学习（duplicate guard）
+    ✔ 稳定 batch trigger
+    ✔ context-aware learning
+    ✔ 兼容 LiveManager
+    ✔ 避免噪声训练
+    """
+
+    def __init__(self, updater, max_buffer_size=50):
+
+        # =========================
+        # Core dependency
+        # =========================
+        self.updater = updater
+
+        # =========================
+        # Buffer
+        # =========================
+        self.buffer = ResultBuffer()
+        self.max_buffer_size = max_buffer_size
+
+        # =========================
+        # Anti-duplication cache
+        # =========================
+        self._seen = set()
+
+    # =========================================================
+    # Public API
+    # =========================================================
+
+    def record(self, prediction, result, context=None):
+
+        context = context or {}
+
+        match_id = context.get("match_id")
+
+        # =========================
+        # 1️⃣ 防重复学习（关键）
+        # =========================
+        if match_id in self._seen:
+            return 0
+
+        self._seen.add(match_id)
+
+        # =========================
+        # 2️⃣ 构造样本
+        # =========================
+        sample = {"prediction": prediction, "result": result, "context": context}
+
+        self.buffer.add(sample)
+
+        # =========================
+        # 3️⃣ Batch trigger
+        # =========================
+        if self.buffer.ready() or self._force_flush():
+
+            samples = self.buffer.samples()
+
+            self.updater.batch_update(samples)
+
+            self.buffer.clear()
+
+            return len(samples)
+
+        return 0
+
+    # =========================================================
+    # Internal logic
+    # =========================================================
+
+    def _force_flush(self):
+
+        return len(self.buffer.samples()) >= self.max_buffer_size
+
+    # =========================================================
+    # Reset mechanism (for live restart safety)
+    # =========================================================
+
+    def reset(self):
+
+        self.buffer.clear()
+        self._seen.clear()
+
+    def __repr__(self):
+
+        return (
+            f"FeedbackLoop("
+            f"buffer_size={len(self.buffer.samples())}, "
+            f"seen={len(self._seen)})"
+        )
+</file>
+
+<file path="learning/result_buffer.py">
+from collections import deque
+
+
+class ResultBuffer:
+    """
+    保存最近N场比赛结果
+    防止单场比赛立即更新权重
+    """
+
+    def __init__(self, max_size=50):
+        self.buffer = deque(maxlen=max_size)
+
+    def add(self, sample):
+        self.buffer.append(sample)
+
+    def ready(self):
+        return len(self.buffer) >= 20
+
+    def samples(self):
+        return list(self.buffer)
+
+    def clear(self):
+        self.buffer.clear()
+
+    def __len__(self):
+        return len(self.buffer)
+</file>
+
+<file path="learning/weight_updater.py">
+import json
+import os
+
+
+class WeightUpdater:
+    """
+    V2.0 AI Adaptive Engine
+    -----------------------
+    Online Adaptive Weight Learning Engine
+
+    Features:
+    ✔ Online weight adaptation
+    ✔ Match-level evaluation
+    ✔ Persistent storage
+    ✔ Stable normalization
+    ✔ Fusion-compatible output
+    """
+
+    WEIGHT_FILE = "data/model_weights.json"
+
+    def __init__(self):
+
+        # =========================
+        # Learning rate
+        # =========================
+        self.learning_rate = 0.02
+
+        # =========================
+        # Base weights
+        # =========================
+        self.weights = {"elo": 0.50, "poisson": 0.50}
+
+        # =========================
+        # Load persisted weights
+        # =========================
+        self._load()
+
+    # =========================================================
+    # Public API
+    # =========================================================
+
+    def current_weights(self):
+        return dict(self.weights)
+
+    def batch_update(self, samples):
+        """
+        samples:
+        [
+            {
+                "prediction": {...},
+                "result": "H|D|A",
+                "context": {...}
+            }
+        ]
+        """
+
+        if not samples:
+            return
+
+        elo_total = 0.0
+        poisson_total = 0.0
+
+        for s in samples:
+
+            elo_score, poisson_score = self._evaluate(s["prediction"], s["result"])
+
+            elo_total += elo_score
+            poisson_total += poisson_score
+
+        n = len(samples)
+
+        elo_avg = elo_total / n
+        poisson_avg = poisson_total / n
+
+        delta = elo_avg - poisson_avg
+
+        # =========================
+        # Adaptive update
+        # =========================
+        self.weights["elo"] += delta * self.learning_rate
+        self.weights["poisson"] -= delta * self.learning_rate
+
+        self._normalize()
+        self._save()
+
+    # =========================================================
+    # Core evaluation
+    # =========================================================
+
+    def _evaluate(self, prediction, result):
+
+        if not prediction:
+            return 0.5, 0.5
+
+        elo = prediction.get("elo", {})
+        poi = prediction.get("poisson", {})
+
+        elo_score = elo.get(result, 0.0)
+        poisson_score = poi.get(result, 0.0)
+
+        return elo_score, poisson_score
+
+    # =========================================================
+    # Normalization (critical stability layer)
+    # =========================================================
+
+    def _normalize(self):
+
+        # prevent collapse
+        for k in self.weights:
+            self.weights[k] = max(0.05, self.weights[k])
+
+        total = sum(self.weights.values())
+
+        if total <= 0:
+            self.weights = {"elo": 0.5, "poisson": 0.5}
+            return
+
+        for k in self.weights:
+            self.weights[k] = round(self.weights[k] / total, 4)
+
+    # =========================================================
+    # Persistence layer
+    # =========================================================
+
+    def _save(self):
+
+        os.makedirs(os.path.dirname(self.WEIGHT_FILE), exist_ok=True)
+
+        with open(self.WEIGHT_FILE, "w", encoding="utf-8") as f:
+            json.dump(self.weights, f, indent=4)
+
+    def _load(self):
+
+        if not os.path.exists(self.WEIGHT_FILE):
+            return
+
+        try:
+            with open(self.WEIGHT_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            if isinstance(data, dict):
+                if "elo" in data and "poisson" in data:
+                    self.weights = {
+                        "elo": float(data["elo"]),
+                        "poisson": float(data["poisson"]),
+                    }
+
+        except Exception:
+            self.weights = {"elo": 0.5, "poisson": 0.5}
+
+    # =========================================================
+    # Debug tools
+    # =========================================================
+
+    def reset(self):
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+        self._save()
+
+    def __repr__(self):
+        return f"WeightUpdater(elo={self.weights['elo']}, poisson={self.weights['poisson']})"
+</file>
+
+<file path="live/adjuster.py">
+"""
+live/adjuster.py
+
+LIVE SYSTEM V1.5
+
+实时概率调整器
+
+职责：
+    - 基于比分 + 时间调整胜率
+"""
+
+from live.state import MatchState
+
+
+class LiveAdjuster:
+    """
+    简单动态调整模型（V1）
+    """
+
+    def __init__(self):
+        # 调整强度（V1固定）
+        self.k_score = 0.08
+        self.k_time = 0.002
+
+    # =========================
+    # 主方法
+    # =========================
+    def adjust(self, prob: dict, state: MatchState) -> dict:
+        """
+        输入：
+            prob  = {"H":x,"D":x,"A":x}
+            state = MatchState
+
+        输出：
+            adjusted prob
+        """
+
+        h, a = state.home_score, state.away_score
+        minute = max(1, state.minute)
+
+        diff = h - a
+
+        result = prob.copy()
+
+        # =========================
+        # 1️⃣ 比分影响
+        # =========================
+        result["H"] += diff * self.k_score
+        result["A"] -= diff * self.k_score
+
+        # =========================
+        # 2️⃣ 时间影响（减少平局）
+        # =========================
+        decay = minute * self.k_time
+
+        result["D"] *= max(0.2, 1 - decay)
+
+        # =========================
+        # 3️⃣ 防止概率异常
+        # =========================
+        for k in result:
+            result[k] = max(0.01, result[k])
+
+        # =========================
+        # 4️⃣ 归一化
+        # =========================
+        total = sum(result.values())
+
+        return {k: v / total for k, v in result.items()}
+</file>
+
+<file path="live/events.py">
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict
+
+
+class EventType(str, Enum):
+    """比赛事件类型"""
+
+    GOAL = "goal"
+    OWN_GOAL = "own_goal"
+
+    YELLOW = "yellow_card"
+    RED = "red_card"
+
+    PENALTY = "penalty"
+
+    SUBSTITUTION = "substitution"
+
+    SHOT = "shot"
+    SHOT_ON_TARGET = "shot_on_target"
+
+    CORNER = "corner"
+
+    FREE_KICK = "free_kick"
+
+    OFFSIDE = "offside"
+
+    FOUL = "foul"
+
+    VAR = "var"
+
+    PERIOD_START = "period_start"
+    PERIOD_END = "period_end"
+
+    MATCH_START = "match_start"
+    MATCH_END = "match_end"
+
+    UNKNOWN = "unknown"
+
+
+@dataclass(slots=True)
+class MatchEvent:
+    """
+    LIVE事件对象
+    """
+
+    minute: int
+
+    event_type: EventType
+
+    team: str | None = None
+
+    player: str | None = None
+
+    timestamp: datetime = field(default_factory=datetime.utcnow)
+
+    payload: Dict[str, Any] = field(default_factory=dict)
+
+    def __str__(self) -> str:
+        return (
+            f"[{self.minute}'] "
+            f"{self.event_type.value} "
+            f"{self.team or ''} "
+            f"{self.player or ''}"
+        )
+
+    @property
+    def is_goal(self) -> bool:
+        return self.event_type in (
+            EventType.GOAL,
+            EventType.OWN_GOAL,
+        )
+
+    @property
+    def is_red(self) -> bool:
+        return self.event_type == EventType.RED
+
+    @property
+    def is_yellow(self) -> bool:
+        return self.event_type == EventType.YELLOW
+</file>
+
+<file path="live/manager.py">
+from typing import Dict
+import threading
+import time
+
+from live.runtime import MatchRuntime
+from live.predictor import LivePredictor
+from core.pipeline import Pipeline
+from live.events import MatchEvent
+from live.snapshot import SnapshotStore
+
+from evolution.self_learning.feedback import FeedbackLoop
+from learning.weight_updater import WeightUpdater
+
+
+class LiveManager:
+    """
+    V2.0 AI Adaptive Live Manager
+
+    Upgrade:
+    ✔ Online learning integration
+    ✔ Safe learning trigger
+    ✔ Runtime isolation
+    ✔ TTL GC system
+    ✔ Self-learning loop binding
+    ✔ No duplicate training
+    """
+
+    def __init__(self, core_pipeline: Pipeline):
+
+        # =========================
+        # Core dependency
+        # =========================
+        self.core_pipeline = core_pipeline
+
+        # =========================
+        # Runtime state
+        # =========================
+        self.runtimes: Dict[str, MatchRuntime] = {}
+        self.last_active: Dict[str, float] = {}
+
+        # =========================
+        # Concurrency lock
+        # =========================
+        self._lock = threading.Lock()
+
+        # =========================
+        # Snapshot system
+        # =========================
+        self.snapshot_store = SnapshotStore()
+
+        # =========================
+        # Predictor
+        # =========================
+        self.predictor = LivePredictor(core_pipeline)
+
+        # =========================
+        # V2.0 Adaptive Learning
+        # =========================
+        self.weight_updater = WeightUpdater()
+        self.feedback_loop = FeedbackLoop(self.weight_updater)
+
+        # =========================
+        # TTL config
+        # =========================
+        self.match_ttl = 60 * 30  # 30 minutes
+
+        # =========================
+        # Start GC thread
+        # =========================
+        self._start_gc_thread()
+
+    # =========================================================
+    # Match lifecycle
+    # =========================================================
+
+    def create_match(self, match_id: str, home: str, away: str):
+
+        with self._lock:
+
+            if match_id in self.runtimes:
+                raise ValueError("Match already exists")
+
+            runtime = MatchRuntime(match_id=match_id, predictor=self.predictor)
+
+            runtime.attach_snapshot_store(self.snapshot_store)
+            runtime.start(home, away)
+
+            self.runtimes[match_id] = runtime
+            self.last_active[match_id] = time.time()
+
+        return {"status": "created", "match_id": match_id}
+
+    # =========================================================
+    # Event handling
+    # =========================================================
+
+    def handle_event(self, match_id: str, event: MatchEvent):
+
+        with self._lock:
+            runtime = self.runtimes.get(match_id)
+
+        if runtime is None:
+            return None
+
+        self.last_active[match_id] = time.time()
+
+        return runtime.step(event)
+
+    # =========================================================
+    # State query
+    # =========================================================
+
+    def get_state(self, match_id: str):
+
+        runtime = self.get_runtime(match_id)
+
+        return {
+            "match_id": match_id,
+            "state": {
+                "home_score": runtime.state.home_score,
+                "away_score": runtime.state.away_score,
+                "minute": runtime.state.minute,
+            },
+            "prob": runtime.predict(),
+        }
+
+    def get_runtime(self, match_id: str):
+
+        runtime = self.runtimes.get(match_id)
+
+        if runtime is None:
+            raise ValueError(f"Match not found: {match_id}")
+
+        return runtime
+
+    # =========================================================
+    # Match finished → AI Learning Hook
+    # =========================================================
+
+    def on_match_finished(self, match_id: str, actual_result: int):
+
+        runtime = self.runtimes.get(match_id)
+
+        if runtime is None:
+            return
+
+        # =========================
+        # 1️⃣ 获取缓存预测
+        # =========================
+        pred = runtime.last_prediction
+
+        if pred is None:
+            return
+
+        # =========================
+        # 2️⃣ 触发学习（核心）
+        # =========================
+        reward = self.feedback_loop.record(
+            prediction=pred,
+            result=actual_result,
+            context={"match_id": match_id, "minute": runtime.state.minute},
+        )
+
+        # =========================
+        # 3️⃣ 更新权重日志
+        # =========================
+        if reward > 0:
+            print(f"[V2.0 LEARN] match={match_id} samples={reward}")
+
+        # =========================
+        # 4️⃣ 可选释放 runtime
+        # =========================
+        # self.runtimes.pop(match_id, None)
+
+    # =========================================================
+    # GC system
+    # =========================================================
+
+    def cleanup(self):
+
+        now = time.time()
+        to_remove = []
+
+        for match_id, last in self.last_active.items():
+
+            if now - last > self.match_ttl:
+                to_remove.append(match_id)
+
+        for match_id in to_remove:
+
+            print(f"[GC] removing match {match_id}")
+
+            self.runtimes.pop(match_id, None)
+            self.last_active.pop(match_id, None)
+
+    def _gc_loop(self):
+
+        while True:
+
+            time.sleep(60)
+            self.cleanup()
+
+    def _start_gc_thread(self):
+
+        t = threading.Thread(target=self._gc_loop, daemon=True)
+        t.start()
+</file>
+
+<file path="live/queue.py">
+from collections import defaultdict, deque
+from live.events import MatchEvent
+
+
+class EventQueue:
+    """
+    V1.7 Multi-Match Queue
+    """
+
+    def __init__(self):
+        self.queues = defaultdict(deque)
+
+    # =========================
+    # 1️⃣ 入队（按比赛）
+    # =========================
+    def push(self, match_id: str, event: MatchEvent):
+        self.queues[match_id].append(event)
+
+    # =========================
+    # 2️⃣ 出队（按比赛）
+    # =========================
+    def pop(self, match_id: str):
+        if not self.queues[match_id]:
+            return None
+        return self.queues[match_id].popleft()
+
+    # =========================
+    # 3️⃣ 判断是否为空
+    # =========================
+    def is_empty(self, match_id: str):
+        return len(self.queues[match_id]) == 0
+
+    # =========================
+    # 4️⃣ 调试
+    # =========================
+    def size(self, match_id: str):
+        return len(self.queues[match_id])
+</file>
+
+<file path="live/snapshot.py">
+from dataclasses import dataclass
+from typing import Any, Dict, List
+from copy import deepcopy
+
+
+@dataclass
+class Snapshot:
+    match_id: str
+    minute: int
+    event: Dict[str, Any]
+    state: Dict[str, Any]
+    prob: Dict[str, Any]
+
+
+class SnapshotStore:
+    """
+    V1.7 Snapshot System
+
+    职责：
+        - 记录 runtime 每一步完整状态
+        - 支持 live vs replay 对比
+    """
+
+    def __init__(self):
+        self._snapshots: Dict[str, List[Snapshot]] = {}
+
+    # =========================
+    # 1️⃣ 写入 snapshot
+    # =========================
+    def record(self, match_id: str, minute: int, event, state, prob):
+        if match_id not in self._snapshots:
+            self._snapshots[match_id] = []
+
+        snap = Snapshot(
+            match_id=match_id,
+            minute=minute,
+            event=deepcopy(event.__dict__ if hasattr(event, "__dict__") else event),
+            state=deepcopy(state.__dict__ if hasattr(state, "__dict__") else state),
+            prob=deepcopy(prob),
+        )
+
+        self._snapshots[match_id].append(snap)
+
+    # =========================
+    # 2️⃣ 获取全部 snapshot
+    # =========================
+    def get_all(self, match_id: str) -> List[Snapshot]:
+        return self._snapshots.get(match_id, [])
+
+    # =========================
+    # 3️⃣ 对比一致性
+    # =========================
+    def compare(self, match_id: str, replay_snapshots: List[Snapshot]):
+        live = self._snapshots.get(match_id, [])
+
+        diff = []
+
+        for l, r in zip(live, replay_snapshots):
+            if l.state != r.state or l.prob != r.prob:
+                diff.append({"minute": l.minute, "live": l, "replay": r})
+
+        return diff
+</file>
+
+<file path="live/state.py">
+"""
+live/state.py
+
+LIVE SYSTEM V1.5
+
+比赛状态对象（MatchState）
+
+职责：
+    1. 保存比赛当前状态
+    2. 不负责任何预测
+    3. 不负责任何计算
+"""
+
+from dataclasses import dataclass, field
+from typing import List, Any
+
+
+@dataclass
+class MatchState:
+    """
+    保存一场比赛当前状态。
+    """
+
+    # 基本信息
+    home: str
+    away: str
+
+    # 比赛状态
+    minute: int = 0
+    status: str = "NS"  # NS / 1H / HT / 2H / ET / FT
+
+    # 当前比分
+    home_score: int = 0
+    away_score: int = 0
+
+    # 已发生事件（由 processor.py 维护）
+    events: List[Any] = field(default_factory=list)
+
+    @property
+    def score(self) -> str:
+        """返回当前比分字符串，例如：1-0"""
+        return f"{self.home_score}-{self.away_score}"
+
+    def is_finished(self) -> bool:
+        """比赛是否结束"""
+        return self.status == "FT"
+
+    def reset(self) -> None:
+        """重置比赛状态（Replay 测试使用）"""
+        self.minute = 0
+        self.status = "NS"
+        self.home_score = 0
+        self.away_score = 0
+        self.events.clear()
+
+    def __str__(self) -> str:
+        return (
+            f"[{self.status}] "
+            f"{self.home} "
+            f"{self.home_score}-{self.away_score} "
+            f"{self.away} "
+            f"({self.minute}')"
+        )
+
+    def to_dict(self):
+        return self.__dict__
+</file>
+
+<file path="live/ws_adapter.py">
+from live.manager import LiveManager
+
+# ⚠️ 这里应该是你全局单例
+from app.main import live_manager
+
+
+# =========================
+# WebSocket 业务适配层
+# =========================
+def handle_ws_event(match_id: str, data: dict):
+    """
+    WS → Runtime 转换层
+    """
+
+    runtime = live_manager.runtimes.get(match_id)
+
+    if runtime is None:
+        return {"error": f"match not found: {match_id}"}
+
+    # =========================
+    # 构造 event（轻量版）
+    # =========================
+    event = data  # V1.7先直接透传（后续可强化 schema）
+
+    # =========================
+    # 执行 runtime
+    # =========================
+    result = runtime.step(event)
+
+    # =========================
+    # 确保 JSON安全
+    # =========================
+    return {
+        "match_id": match_id,
+        "state": {
+            "home_score": runtime.state.home_score,
+            "away_score": runtime.state.away_score,
+            "minute": runtime.state.minute,
+        },
+        "prob": result["prob"] if isinstance(result, dict) else result,
+    }
+</file>
+
+<file path="models/elo_model.py">
+class EloModel:
+
+    def __init__(self, k=32):
+
+        # =========================
+        # V1-FREEZE: learning rate
+        # =========================
+        self.k = k
+        self.ratings = {}
+
+    def get_rating(self, team):
+
+        # =========================
+        # V1-FREEZE: default rating
+        # =========================
+        return self.ratings.get(team, 1500)
+
+    def expected(self, ra, rb):
+
+        # =========================
+        # V1-FREEZE: logistic expectation
+        # =========================
+        diff = (rb - ra) / 400
+        return 1 / (1 + 10**diff)
+
+    def update(self, home, away, result):
+
+        # =========================
+        # V1-FREEZE: ratings lookup
+        # =========================
+        ra = self.get_rating(home)
+        rb = self.get_rating(away)
+
+        ea = self.expected(ra, rb)
+        eb = 1 - ea
+
+        # =========================
+        # V1-FREEZE: outcome encoding
+        # =========================
+        if result == "H":
+            sa, sb = 1, 0
+        elif result == "A":
+            sa, sb = 0, 1
+        else:
+            sa, sb = 0.5, 0.5
+
+        self.ratings[home] = ra + self.k * (sa - ea)
+        self.ratings[away] = rb + self.k * (sb - eb)
+
+    def predict(self, home, away):
+
+        # =========================
+        # V1-FREEZE: probability estimation
+        # =========================
+        ra = self.get_rating(home)
+        rb = self.get_rating(away)
+
+        ph = self.expected(ra, rb)
+        pa = 1 - ph
+
+        draw = max(0.05, 1 - abs(ph - pa))
+
+        raw = {"H": ph, "A": pa, "D": draw}
+
+        # =========================
+        # V1-FREEZE: normalization
+        # =========================
+        total = sum(raw.values())
+
+        return {k: v / total for k, v in raw.items()}
+</file>
+
+<file path="models/poisson_model.py">
+import math
+from collections import defaultdict
+
+
+class PoissonModel:
+
+    def __init__(self):
+
+        # =========================
+        # V1-FREEZE: attack/defense ratings
+        # =========================
+        self.team_attack = defaultdict(lambda: 1.0)
+        self.team_defense = defaultdict(lambda: 1.0)
+
+    def train(self, matches):
+
+        for m in matches:
+
+            home = m["home"]
+            away = m["away"]
+            result = m["result"]
+
+            # =========================
+            # V1-FREEZE: surrogate goal model (not real xG)
+            # =========================
+            if result == "H":
+                home_goals, away_goals = 2, 1
+            elif result == "A":
+                home_goals, away_goals = 1, 2
+            else:
+                home_goals, away_goals = 1, 1
+
+            self.team_attack[home] += home_goals * 0.1
+            self.team_defense[away] += home_goals * 0.1
+
+            self.team_attack[away] += away_goals * 0.1
+            self.team_defense[home] += away_goals * 0.1
+
+    def poisson(self, lam, k):
+
+        # =========================
+        # V1-FREEZE: numerical stability
+        # =========================
+        lam = max(0.01, lam)
+
+        return (lam**k * math.exp(-lam)) / math.factorial(k)
+
+    def predict_score_probs(self, home, away, max_goals=5):
+
+        home_attack = self.team_attack[home]
+        away_defense = self.team_defense[away]
+
+        away_attack = self.team_attack[away]
+        home_defense = self.team_defense[home]
+
+        # =========================
+        # V1-FREEZE: stable lambda estimation
+        # =========================
+        home_lambda = max(0.05, home_attack / max(away_defense, 0.1))
+
+        away_lambda = max(0.05, away_attack / max(home_defense, 0.1))
+
+        matrix = {}
+
+        # =========================
+        # V1-FREEZE: truncated score space (0-5 goals)
+        # =========================
+        for i in range(max_goals + 1):
+            for j in range(max_goals + 1):
+
+                p = self.poisson(home_lambda, i) * self.poisson(away_lambda, j)
+
+                matrix[(i, j)] = p
+
+        return matrix
+
+    def predict_1x2(self, home, away):
+
+        score_probs = self.predict_score_probs(home, away)
+
+        H = 0
+        D = 0
+        A = 0
+
+        for (i, j), p in score_probs.items():
+
+            if i > j:
+                H += p
+            elif i == j:
+                D += p
+            else:
+                A += p
+
+        total = H + D + A
+
+        return {"H": H / total, "D": D / total, "A": A / total}
+</file>
+
+<file path="pyproject.toml">
+[project]
+name = "football-v2"
+version = "0.1.0"
+requires-python = ">=3.9"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+</file>
+
+<file path="README.md">
+# ⚽ Football Prediction System V1 (Frozen Baseline)
+
+## 📌 项目概述
+
+本项目是一个基于统计建模 + 概率融合的足球赛果预测系统。
+
+当前版本为：
+
+> 🧱 V1 FINAL FREEZE（稳定基线版本）
+
+系统集成了三类核心模型：
+
+- Elo Rating 模型（强度建模）
+- Poisson 进球模型（比分分布）
+- Market Fusion（赔率市场校准）
+
+并提供完整的：
+
+- 回测系统
+- 模型对比系统
+- 投注模拟系统
+- Value Betting 分析
+
+---
+
+# 🧱 系统结构
+</file>
+
+<file path="requirements.txt">
+# =========================
+# Core runtime
+# =========================
+python>=3.9
+
+# =========================
+# Data handling
+# =========================
+pandas>=2.0.0
+numpy>=1.24.0
+
+# =========================
+# Math / statistics
+# =========================
+scipy>=1.10.0
+
+# =========================
+# (optional but useful for logs/debug)
+# =========================
+tqdm>=4.66.0
+</file>
+
+<file path="test_events.py">
+import asyncio
+import websockets
+import json
+
+async def test():
+    async with websockets.connect("ws://127.0.0.1:8000/ws/live/brazil_vs_france") as ws:
+
+        print(await ws.recv())  # connected
+
+        await ws.send(json.dumps({
+            "minute": 23,
+            "type": "goal",
+            "team": "Brazil"
+        }))
+
+        print(await ws.recv())
+
+asyncio.run(test())
+</file>
+
+<file path="app/api.py">
+from pydantic import BaseModel
+from fastapi import APIRouter
+from fastapi import HTTPException
+
+from core.pipeline import Pipeline
+from live.pipeline import LivePipeline
+from live.events import MatchEvent, EventType
+from live.manager import LiveManager
+
+router = APIRouter()
+
+
+core_pipeline = Pipeline()
+live_pipeline = LivePipeline(core_pipeline)
+
+
+# =========================
+# 数据模型
+# =========================
+class EventIn(BaseModel):
+    minute: int
+    type: str
+    team: str
+    player: str | None = None
+
+
+class StartMatch(BaseModel):
+    home: str
+    away: str
+
+
+# =========================
+# 初始化比赛
+# =========================
+@router.post("/match/start")
+def start_match(data: dict):
+    return LiveManager.create_match(
+        match_id=data["match_id"], home=data["home"], away=data["away"]
+    )
+
+
+# =========================
+# 推送事件
+# =========================
+@router.post("/event")
+def push_event(data: dict):
+    event = MatchEvent(
+        minute=data["minute"],
+        event_type=EventType[data["type"].upper()],
+        team=data["team"],
+        player=data.get("player"),
+    )
+
+    return LiveManager.handle_event(match_id=data["match_id"], event=event)
+</file>
+
+<file path="app/main.py">
+from fastapi import FastAPI
+from app.api import router as api_router
+from app.websocket import router as ws_router
+import logging
+
+# -----------------------
+# Logger（替代 print）
+# -----------------------
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI()
+
+# -----------------------
+# Debug WebSocket Routes
+# -----------------------
+logger.info(f"WS ROUTES COUNT: {len(ws_router.routes)}")
+
+for r in ws_router.routes:
+    logger.info(f"WS ROUTE: {r}")
+
+# -----------------------
+# Router Registration
+# -----------------------
+app.include_router(api_router)
+app.include_router(ws_router)
+</file>
+
+<file path="app/run.py">
+from core.pipeline import Pipeline
+from data.real_matches import load_real_matches
+
+
+def main():
+
+    # =========================
+    # V1-FREEZE: 数据加载
+    # =========================
+    matches = load_real_matches()
+
+    # =========================
+    # V1-FREEZE: pipeline初始化
+    # =========================
+    pipe = Pipeline()
+    pipe.train(matches)
+
+    mode = "benchmark"  # backtest / benchmark / betting
+
+    # =========================
+    # BACKTEST MODE
+    # =========================
+    if mode == "backtest":
+
+        from evaluation.backtest import Backtester
+
+        bt = Backtester(pipe)
+        result, _ = bt.run(matches)
+
+        print("===== 回测结果 =====")
+        print(result)
+
+    # =========================
+    # BENCHMARK MODE
+    # =========================
+    elif mode == "benchmark":
+
+        from evaluation.benchmark import ModelBenchmark
+
+        bm = ModelBenchmark(pipe)
+
+        print("===== 模型对比 =====")
+        print(bm.run(matches))
+
+    # =========================
+    # BETTING MODE
+    # =========================
+    elif mode == "betting":
+
+        from evaluation.betting import BettingEngine
+        from evaluation.value_engine import ValueBetEngine
+
+        print("[RUN] Betting mode started")
+
+        try:
+            be = BettingEngine(bankroll=1000)
+            ve = ValueBetEngine()
+        except Exception as e:
+            print(f"[ERROR] Engine init failed: {e}")
+            return
+
+        print("===== 投注结果 =====")
+
+        for m in matches:
+
+            try:
+                odds = m.get("odds", None)
+
+                pred = pipe.predict(m["home"], m["away"], odds=odds)
+
+                ev = None
+                try:
+                    ev = ve.find_value_bets(pred, odds)
+                except Exception:
+                    ev = None
+
+                # =========================
+                # V1-FREEZE: EV仅分析
+                # =========================
+                if ev:
+                    print(ev)
+
+            except Exception as e:
+                print(f"[WARN] match failed: {m.get('home')} vs {m.get('away')} -> {e}")
+                continue
+
+        try:
+            print("ROI:", be.run(matches, pipe))
+        except Exception as e:
+            print(f"[ERROR] ROI calculation failed: {e}")
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="app/websocket.py">
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+import asyncio
+import json
+
+from live.ws_adapter import handle_ws_event
+
+router = APIRouter()
+
+# session: ws -> match_id
+sessions = {}
+
+
+# =========================
+# WebSocket 主入口
+# =========================
+@router.websocket("/ws/live")
+async def live(ws: WebSocket):
+    await ws.accept()
+
+    match_id = None
+
+    try:
+        # =========================
+        # 1️⃣ 初始化连接（必须第一条消息）
+        # =========================
+        init = await ws.receive_json()
+
+        if init.get("type") != "connect":
+            await ws.send_json({"error": "first message must be connect"})
+            await ws.close()
+            return
+
+        match_id = init["match_id"]
+        sessions[ws] = match_id
+
+        await ws.send_json({"status": "connected", "match_id": match_id})
+
+        # =========================
+        # 2️⃣ 主循环
+        # =========================
+        while True:
+            data = await ws.receive_json()
+
+            # =========================
+            # 2.1 心跳
+            # =========================
+            if data.get("type") == "ping":
+                await ws.send_json({"type": "pong"})
+                continue
+
+            # =========================
+            # 2.2 业务事件
+            # =========================
+            try:
+                result = handle_ws_event(match_id, data)
+
+                await ws.send_json(result)
+
+            except Exception as e:
+                # ❗保证连接不断
+                await ws.send_json({"error": str(e), "recoverable": True})
+
+    except WebSocketDisconnect:
+        pass
+
+    except Exception as e:
+        try:
+            await ws.send_json({"error": f"fatal: {str(e)}"})
+        except:
+            pass
+
+    finally:
+        sessions.pop(ws, None)
+        try:
+            await ws.close()
+        except:
+            pass
+</file>
+
+<file path="core/pipeline.py">
+from models.elo_model import EloModel
+from models.poisson_model import PoissonModel
+from features.builder import FeatureBuilder
+from ensemble.fusion import LearnedFusion
+from data.odds_calibrator import odds_to_prob
+
+from evolution.drift_detector import DriftDetector
+from evolution.calibrator import Calibrator
+
+from learning.weight_updater import WeightUpdater
+
+
+class Pipeline:
+    """
+    V2.0 AI Adaptive Engine - Core Pipeline
+
+    Upgrade:
+    ✔ Adaptive Fusion input
+    ✔ Confidence scoring
+    ✔ Explainable output structure
+    ✔ Drift detection integration
+    ✔ Calibration layer
+    ✔ Future RL hook (reserved)
+    """
+
+    def __init__(self):
+
+        # =========================
+        # Base Models
+        # =========================
+        self.elo = EloModel()
+        self.poisson = PoissonModel()
+
+        # =========================
+        # Feature Layer
+        # =========================
+        self.features = FeatureBuilder()
+
+        # =========================
+        # Fusion Layer (Adaptive)
+        # =========================
+        self.fusion = LearnedFusion()
+
+        # =========================
+        # Evolution Layer
+        # =========================
+        self.drift_detector = DriftDetector(window_size=50)
+        self.calibrator = Calibrator()
+
+        # =========================
+        # Learning hook (future RL)
+        # =========================
+        self.weight_updater = WeightUpdater()
+
+    # =========================================================
+    # Training
+    # =========================================================
+
+    def train(self, matches):
+
+        for m in matches:
+            self.elo.update(m["home"], m["away"], m["result"])
+            self.features.train_update(m)
+
+        self.poisson.train(matches)
+
+    # =========================================================
+    # Main Predict Entry
+    # =========================================================
+
+    def predict(self, home, away, odds=None):
+
+        # =========================
+        # 1️⃣ Base fusion prediction
+        # =========================
+        elo_pred = self.elo.predict(home, away)
+        poi_pred = self.poisson.predict_1x2(home, away)
+
+        base = self.fusion.fuse(elo_pred, poi_pred)
+
+        # =========================
+        # 2️⃣ Drift detection
+        # =========================
+        self.drift_detector.update(base)
+
+        drift = self.drift_detector.detect()
+
+        # =========================
+        # 3️⃣ Calibration
+        # =========================
+        base = self.calibrator.calibrate(base)
+
+        # =========================
+        # 4️⃣ Confidence score
+        # =========================
+        confidence = self._confidence(base, drift)
+
+        # =========================
+        # 5️⃣ Market fusion (optional)
+        # =========================
+        if odds is not None:
+            market_prob = odds_to_prob(odds)
+
+            base = self._merge_market(base, market_prob)
+
+        # =========================
+        # 6️⃣ Final structured output
+        # =========================
+        return self._format_output(base=base, confidence=confidence, drift=drift)
+
+    # =========================================================
+    # Confidence Engine
+    # =========================================================
+
+    def _confidence(self, probs, drift):
+
+        max_p = max(probs.values())
+
+        entropy = -sum(
+            p * (0 if p == 0 else __import__("math").log(p)) for p in probs.values()
+        )
+
+        # normalize entropy
+        entropy_score = 1 / (1 + entropy)
+
+        drift_penalty = 0.15 if drift else 0.0
+
+        confidence = (max_p * 0.7 + entropy_score * 0.3) - drift_penalty
+
+        return round(max(0.0, min(1.0, confidence)), 4)
+
+    # =========================================================
+    # Market fusion helper
+    # =========================================================
+
+    def _merge_market(self, model, market):
+
+        merged = {}
+
+        for k in ["H", "D", "A"]:
+
+            merged[k] = 0.6 * model[k] + 0.4 * market[k]
+
+        total = sum(merged.values())
+
+        return {k: merged[k] / total for k in merged}
+
+    # =========================================================
+    # Output formatter (V2.0 standard)
+    # =========================================================
+
+    def _format_output(self, base, confidence, drift):
+
+        prediction = max(base, key=base.get)
+
+        return {
+            "prediction": prediction,
+            "probabilities": base,
+            "confidence": confidence,
+            "drift_detected": drift,
+            "model": "V2.0-AI-ADAPTIVE",
+            "explain": self._explain(base, confidence, drift),
+        }
+
+    # =========================================================
+    # Explainability layer
+    # =========================================================
+
+    def _explain(self, probs, confidence, drift):
+
+        explanation = []
+
+        explanation.append("Model fusion completed (Elo + Poisson).")
+
+        if drift:
+            explanation.append("Warning: distribution drift detected.")
+
+        explanation.append(f"Max probability: {max(probs.values()):.3f}")
+
+        explanation.append(f"Confidence score: {confidence:.3f}")
+
+        return explanation
+</file>
+
+<file path="live/pipeline.py">
+"""
+live/pipeline.py
+LIVE SYSTEM V1.5
+"""
+
+from live.state import MatchState
+from live.queue import EventQueue
+from live.processor import EventProcessor
+from live.predictor import LivePredictor
+from live.events import MatchEvent
+from live.state_store import StateStore
+
+
+class LivePipeline:
+
+    def __init__(self, core_pipeline):
+        self.predictor = LivePredictor(core_pipeline)
+
+        self.queue = EventQueue()
+        self.processor = EventProcessor()
+
+        self.store = StateStore()
+
+    # =========================
+    # 初始化比赛（统一入口）
+    # =========================
+    def start_match(self, match_id: str, home: str, away: str):
+        state = MatchState(home, away)
+        self.store.states[match_id] = state
+
+    # =========================
+    # 推送事件（match_id safe）
+    # =========================
+    def push_event(self, match_id: str, event: MatchEvent):
+        self.queue.push(match_id, event)
+
+    # =========================
+    # step（核心实时处理）
+    # =========================
+    def step(self, match_id, event: MatchEvent):
+
+        self.queue.push(match_id, event)
+
+        state = self.store.get(match_id)
+
+        if state is None:
+            raise ValueError(f"Match not initialized: {match_id}")
+
+        # process queue safely
+        while not self.queue.is_empty(match_id):
+            e = self.queue.pop(match_id)
+
+            try:
+                state = self.processor.process(state, e)
+            except Exception:
+                continue
+
+        # persist state
+        self.store.states[match_id] = state
+
+        # safe predict
+        try:
+            return self.predictor.predict(state)
+        except Exception:
+            return None
+</file>
+
+<file path="live/predictor.py">
+from live.adjuster import LiveAdjuster
+from core.pipeline import Pipeline
+
+
+class LivePredictor:
+
+    def __init__(self, pipeline: Pipeline):
+        self.pipeline = pipeline
+        self.adjuster = LiveAdjuster()
+
+    # =========================
+    # 主入口
+    # =========================
+    def predict(self, state):
+        """
+        输入：
+            MatchState
+
+        输出：
+            {"H": x, "D": x, "A": x}
+        """
+
+        # -------------------------
+        # 1. 基础模型（安全调用）
+        # -------------------------
+        try:
+            base = self.pipeline.predict(state.home, state.away)
+        except Exception:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+        if base is None:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+        # -------------------------
+        # 2. LIVE adjustment
+        # -------------------------
+        try:
+            live_prob = self.adjuster.adjust(base, state)
+        except Exception:
+            live_prob = base
+
+        # -------------------------
+        # 3. 安全归一化
+        # -------------------------
+        try:
+            total = sum(live_prob.values())
+
+            if total <= 0:
+                return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+            normalized = {k: v / total for k, v in live_prob.items()}
+
+            return normalized
+
+        except Exception:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+    # =========================
+    # 调试接口（限制风险）
+    # =========================
+    def predict_raw(self, state):
+        try:
+            return self.pipeline.predict(state.home, state.away)
+        except Exception:
+            return None
+</file>
+
+<file path="live/processor.py">
+from live.state import MatchState
+from live.events import MatchEvent, EventType
+
+
+class EventProcessor:
+
+    def __init__(self):
+        # 用于简单幂等（避免重复事件）
+        self._seen = set()
+
+    # =========================
+    # 单事件处理
+    # =========================
+    def process(self, state: MatchState, event: MatchEvent) -> MatchState:
+
+        # -------------------------
+        # 1. 幂等性保护（关键修复）
+        # -------------------------
+        event_key = (event.minute, event.event_type, event.team, event.player)
+
+        if event_key in self._seen:
+            return state
+
+        self._seen.add(event_key)
+
+        # -------------------------
+        # 2. 记录事件
+        # -------------------------
+        state.events.append(event)
+
+        # =========================
+        # 3. 进球
+        # =========================
+        if event.event_type == EventType.GOAL:
+            if event.team == state.home:
+                state.home_score += 1
+            elif event.team == state.away:
+                state.away_score += 1
+
+        # =========================
+        # 4. 乌龙球（修正逻辑）
+        # =========================
+        elif event.event_type == EventType.OWN_GOAL:
+            # 乌龙球：给对方加分（不依赖 event.team 归属）
+            if event.team == state.home:
+                state.away_score += 1
+            elif event.team == state.away:
+                state.home_score += 1
+
+        # =========================
+        # 5. 时间更新（防回退污染）
+        # =========================
+        if event.minute > state.minute:
+            state.minute = event.minute
+
+        # =========================
+        # 6. 状态机更新（简化修复）
+        # =========================
+        if state.status != "FT":
+            if state.minute >= 90:
+                state.status = "FT"
+            elif state.minute >= 45 and state.status == "1H":
+                state.status = "2H"
+
+        return state
+
+    # =========================
+    # 批量处理
+    # =========================
+    def process_all(self, state: MatchState, events: list[MatchEvent]) -> MatchState:
+
+        for event in sorted(events, key=lambda e: e.minute):
+            state = self.process(state, event)
+
+        return state
+</file>
+
+<file path="live/replay.py">
+from typing import List, Dict, Any
+
+from live.runtime import MatchRuntime
+from live.state_store import StateStore
+from live.events import MatchEvent, EventType
+from live.processor import EventProcessor
+from live.predictor import LivePredictor
+
+
+class ReplayEngine:
+    """
+    V1.7 Replay Engine
+
+    职责：
+        - 从 StateStore 读取历史
+        - 重建 MatchRuntime
+        - 重新执行事件流
+        - 输出 replay 结果
+    """
+
+    def __init__(self, state_store: StateStore, predictor: LivePredictor):
+        self.state_store = state_store
+        self.predictor = predictor
+
+    # =========================
+    # 1️⃣ Replay 单场比赛
+    # =========================
+    def replay_match(self, match_id: str):
+        history = self.state_store.get_event_timeline(match_id)
+
+        if not history:
+            raise ValueError(f"No history found for match: {match_id}")
+
+        # 重建 runtime（独立实例）
+        runtime = MatchRuntime(match_id=match_id, predictor=self.predictor)
+
+        # 初始化状态
+        first_state = history[0].state
+        runtime.state = first_state
+
+        results = []
+
+        # =========================
+        # 逐条 replay
+        # =========================
+        for snap in history:
+            state = snap.state
+
+            # 构造“伪事件”（用于回放驱动）
+            event = MatchEvent(
+                minute=snap.minute,
+                event_type=EventType.REPLAY,  # 特殊类型
+                team="replay",
+                player=None,
+            )
+
+            runtime.state = state
+
+            prob = runtime.predict()
+
+            results.append(
+                {
+                    "minute": snap.minute,
+                    "state": {
+                        "home_score": runtime.state.home_score,
+                        "away_score": runtime.state.away_score,
+                        "minute": runtime.state.minute,
+                    },
+                    "prob": prob,
+                }
+            )
+
+        return {"match_id": match_id, "replay": results}
+
+    # =========================
+    # 2️⃣ Step-by-step Replay
+    # =========================
+    def replay_step(self, match_id: str, minute: int):
+        history = self.state_store.get_history(match_id)
+
+        for snap in history:
+            if snap.minute == minute:
+                runtime = MatchRuntime(match_id, self.predictor)
+                runtime.state = snap.state
+
+                return {
+                    "minute": minute,
+                    "state": runtime.state,
+                    "prob": runtime.predict(),
+                }
+
+        return None
+</file>
+
+<file path="live/runtime.py">
+from live.state import MatchState
+from live.queue import EventQueue
+from live.processor import EventProcessor
+from live.predictor import LivePredictor
+from live.events import MatchEvent
+
+
+class MatchRuntime:
+    """
+    V1.7 Final：单场比赛运行容器
+    """
+
+    def __init__(self, match_id: str, predictor: LivePredictor):
+        self.match_id = match_id
+
+        # 唯一状态
+        self.state: MatchState | None = None
+
+        # 事件队列
+        self.queue = EventQueue()
+
+        # 事件处理器
+        self.processor = EventProcessor()
+
+        # 预测器（外部注入）
+        self.predictor = predictor
+        self._learning_done = False
+
+    # =========================
+    # 初始化比赛
+    # =========================
+    def start(self, home: str, away: str):
+        self.state = MatchState(home, away)
+
+    # =========================
+    # 接收事件
+    # =========================
+    def push_event(self, event: MatchEvent):
+        self.queue.push(event)
+
+    # =========================
+    # 处理事件流
+    # =========================
+    def _process_events(self):
+        if self.state is None:
+            raise ValueError("Match not started")
+
+        while not self.queue.is_empty():
+            event = self.queue.pop()
+            if event is None:
+                break
+
+            self.state = self.processor.process(self.state, event)
+
+    # =========================
+    # 实时预测
+    # =========================
+    def predict(self):
+        if self.state is None:
+            raise ValueError("Match not started")
+
+        return self.predictor.predict(self.state)
+
+    # =========================
+    # 单步执行（API/WS统一入口）
+    # =========================
+    def step(self, event):
+        """
+        V1.9 Runtime Step
+        """
+
+        # =========================
+        # 1️⃣ 写入事件
+        # =========================
+        self.push_event(event)
+
+        # =========================
+        # 2️⃣ 更新状态
+        # =========================
+        self._process_events()
+
+        # =========================
+        # 3️⃣ 预测（核心）
+        # =========================
+        prob = self.predict()
+
+        # =========================
+        # 4️⃣ V1.9关键：缓存预测结果（用于Self-Learning）
+        # =========================
+        self.last_prediction = {
+            "H": prob["H"],
+            "D": prob["D"],
+            "A": prob["A"],
+            "minute": self.state.minute,
+            "home_score": self.state.home_score,
+            "away_score": self.state.away_score,
+        }
+
+        # =========================
+        # 5️⃣ Snapshot记录（增强版）
+        # =========================
+        if hasattr(self, "snapshot_store"):
+            self.snapshot_store.record(
+                self.match_id, self.state.minute, event, self.state, prob
+            )
+
+        # =========================
+        # V1.9 Self-Learning Hook（比赛结束触发点）
+        # =========================
+        if hasattr(self.state, "finished") and self.state.finished:
+
+            # ✔ 防重复触发
+            if not getattr(self, "_learning_done", False):
+
+                self._learning_done = True
+
+                if hasattr(self, "manager"):
+                    self.manager.on_match_finished(
+                        self.match_id, self.state.result  # 0=H,1=D,2=A
+                    )
+
+        # =========================
+        # 6️⃣ 输出（保持不变）
+        # =========================
+        return {
+            "state": {
+                "home_score": self.state.home_score,
+                "away_score": self.state.away_score,
+                "minute": self.state.minute,
+            },
+            "prob": prob,
+        }
+
+    # 增加 snapshot 注入
+    def attach_snapshot_store(self, snapshot_store):
+        self.snapshot_store = snapshot_store
+</file>
+
+<file path="live/state_store.py">
+from dataclasses import dataclass
+from typing import Dict, List, Any
+from copy import deepcopy
+
+
+@dataclass
+class StateSnapshot:
+    minute: int
+    state: Any
+
+
+class StateStore:
+    """
+    V1.7 StateStore
+
+    职责：
+        - 记录 MatchState 时间序列
+        - 支持 replay
+        - 支持 debug
+    """
+
+    def __init__(self):
+        # match_id -> List[StateSnapshot]
+        self._store: Dict[str, List[StateSnapshot]] = {}
+
+    # =========================
+    # 1️⃣ 写入状态
+    # =========================
+    def append(self, match_id: str, minute: int, state: Any):
+        """
+        追加状态快照
+        """
+
+        if match_id not in self._store:
+            self._store[match_id] = []
+
+        snapshot = StateSnapshot(minute=minute, state=deepcopy(state))
+
+        self._store[match_id].append(snapshot)
+
+    # =========================
+    # 2️⃣ 获取完整历史
+    # =========================
+    def get_history(self, match_id: str) -> List[StateSnapshot]:
+        return self._store.get(match_id, [])
+
+    # =========================
+    # 3️⃣ 获取某一分钟状态
+    # =========================
+    def get_at_minute(self, match_id: str, minute: int):
+        history = self._store.get(match_id, [])
+
+        for snap in history:
+            if snap.minute == minute:
+                return snap.state
+
+        return None
+
+    # =========================
+    # 4️⃣ 获取最新状态
+    # =========================
+    def latest(self, match_id: str):
+        history = self._store.get(match_id, [])
+
+        if not history:
+            return None
+
+        return history[-1].state
+
+    # =========================
+    # 5️⃣ 回放支持（Replay基础）
+    # =========================
+    def get_event_timeline(self, match_id: str):
+        """
+        返回按时间排序的 state 序列
+        """
+
+        history = self._store.get(match_id, [])
+        return sorted(history, key=lambda x: x.minute)
+</file>
+
+</files>

@@ -4,23 +4,44 @@ from app.websocket import router as ws_router
 import logging
 
 # -----------------------
-# Logger（替代 print）
+# Logger (safe for production)
 # -----------------------
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("football_predict")
 
+# 不再使用 basicConfig（避免污染 uvicorn）
+logger.setLevel(logging.INFO)
+
+
+# -----------------------
+# FastAPI app
+# -----------------------
 app = FastAPI()
 
-# -----------------------
-# Debug WebSocket Routes
-# -----------------------
-logger.info(f"WS ROUTES COUNT: {len(ws_router.routes)}")
-
-for r in ws_router.routes:
-    logger.info(f"WS ROUTE: {r}")
 
 # -----------------------
-# Router Registration
+# Startup hook（补齐架构缺失）
+# -----------------------
+@app.on_event("startup")
+def startup_event():
+    logger.info("[STARTUP] FootballPredict API starting...")
+
+    # 不再打印 route 详情（避免污染日志）
+    logger.info(f"[STARTUP] API routes loaded: {len(api_router.routes)}")
+    logger.info(f"[STARTUP] WS routes loaded: {len(ws_router.routes)}")
+
+
+# -----------------------
+# Router registration
 # -----------------------
 app.include_router(api_router)
+
+# websocket 作为独立模块注册
 app.include_router(ws_router)
+
+
+# -----------------------
+# Optional: health check endpoint
+# -----------------------
+@app.get("/health")
+def health():
+    return {"status": "ok"}

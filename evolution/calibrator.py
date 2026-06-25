@@ -3,19 +3,37 @@ import numpy as np
 
 class Calibrator:
     """
-    概率校准（Platt Scaling 简化版）
+    Temperature scaling calibration (stable heuristic version)
     """
 
+    def __init__(self, temperature=1.15):
+        self.temperature = temperature
+
     def calibrate(self, prob):
-        """
-        prob: {"H":, "D":, "A":}
-        """
 
-        values = np.array(list(prob.values()))
+        if not isinstance(prob, dict):
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
 
-        # soft calibration
-        values = np.power(values, 1.2)
+        try:
+            vec = np.array(
+                [
+                    float(prob.get("H", 0)),
+                    float(prob.get("D", 0)),
+                    float(prob.get("A", 0)),
+                ]
+            )
+        except Exception:
+            return {"H": 0.33, "D": 0.34, "A": 0.33}
 
-        values = values / np.sum(values)
+        # temperature scaling
+        vec = np.power(vec, 1 / self.temperature)
 
-        return {"H": float(values[0]), "D": float(values[1]), "A": float(values[2])}
+        vec = np.clip(vec, 1e-9, None)
+
+        vec = vec / np.sum(vec)
+
+        return {
+            "H": float(vec[0]),
+            "D": float(vec[1]),
+            "A": float(vec[2]),
+        }

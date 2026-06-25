@@ -1,71 +1,75 @@
+import logging
 from evaluation.metrics import logloss, brier_score
 
+logger = logging.getLogger(__name__)
 
-class Backtester:
+
+class BacktestV2:
+
     def __init__(self, pipeline):
-        # =========================
-        # V1-FREEZE: 统一评估入口
-        # =========================
         self.pipeline = pipeline
 
     def run(self, matches):
 
-        # =========================
-        # 1️⃣ 累计指标
-        # =========================
         total_logloss = 0.0
         total_brier = 0.0
+
         correct = 0
+        valid = 0
+        rejected = 0
 
-        valid_n = 0
+        reject_log = []
 
-        # =========================
-        # 2️⃣ 遍历比赛
-        # =========================
-        for match in matches:
+        for i, m in enumerate(matches):
 
-            # =========================
-            # V1-FREEZE: 主预测入口（不可绕过fusion）
-            # =========================
-            pred = self.pipeline.predict(
-                match["home"], match["away"], odds=match["odds"]
-            )
+            # -----------------------
+            # strict validation
+            # -----------------------
+            home = m.get("home")
+            away = m.get("away")
+            result = m.get("result")
 
-            actual = str(match["result"]).strip().upper()
-
-            # =========================
-            # V1-FREEZE: 数据合法性检查
-            # =========================
-            if not pred:
+            if not home or not away or result not in {"H", "D", "A"}:
+                rejected += 1
+                reject_log.append((i, "invalid_match"))
                 continue
 
-            if not all(k in pred for k in ["H", "D", "A"]):
-                continue
+            try:
+                pred = self.pipeline.predict(home, away, odds=m.get("odds"))
 
-            # =========================
-            # 3️⃣ 指标计算
-            # =========================
-            total_logloss += logloss(pred, actual)
-            total_brier += brier_score(pred, actual)
+                if not isinstance(pred, dict):
+                    raise ValueError("invalid_pred")
 
-            pred_label = str(max(pred, key=pred.get)).strip().upper()
+                if not all(k in pred for k in ["H", "D", "A"]):
+                    raise ValueError("missing_keys")
 
-            if pred_label == actual:
-                correct += 1
+                actual = result
 
-            valid_n += 1
+                total_logloss += logloss(pred, actual)
+                total_brier += brier_score(pred, actual)
 
-        # =========================
-        # 4️⃣ 防止空数据
-        # =========================
-        if valid_n == 0:
-            return {"accuracy": 0, "logloss": 0, "brier": 0}, []
+                if max(pred, key=pred.get) == actual:
+                    correct += 1
 
-        # =========================
-        # 5️⃣ 输出结果（V1锁定格式）
-        # =========================
+                valid += 1
+
+            except Exception as e:
+                rejected += 1
+                reject_log.append((i, str(e)))
+
+        if valid == 0:
+            return {
+                "accuracy": 0,
+                "logloss": 0,
+                "brier": 0,
+                "valid": 0,
+                "rejected": rejected,
+            }, reject_log
+
         return {
-            "accuracy": correct / valid_n,
-            "logloss": total_logloss / valid_n,
-            "brier": total_brier / valid_n,
-        }, []
+            "accuracy": correct / valid,
+            "logloss": total_logloss / valid,
+            "brier": total_brier / valid,
+            "valid": valid,
+            "rejected": rejected,
+        }, reject_log

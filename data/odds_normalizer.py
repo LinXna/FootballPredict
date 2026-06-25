@@ -1,24 +1,29 @@
 def normalize_odds(raw_odds):
 
-    # =========================
-    # V1-FREEZE: 安全转换函数
-    # =========================
+    if not isinstance(raw_odds, dict):
+        return {"H": 2.5, "D": 3.2, "A": 2.8}
+
     def safe_float(x):
         try:
-            return float(x)
-        except:
-            return 1e9
-
-    def clamp(v):
-        v = max(v, 1.01)
-        v = min(v, 100.0)
+            v = float(x)
+        except Exception:
+            return None
         return v
 
-    return {
-        # =========================
-        # V1-FREEZE: 赔率标准化 + 防御
-        # =========================
-        "H": clamp(safe_float(raw_odds.get("H", 2.0))),
-        "D": clamp(safe_float(raw_odds.get("D", 3.0))),
-        "A": clamp(safe_float(raw_odds.get("A", 3.0))),
-    }
+    def clamp(v):
+        if v is None:
+            return None
+        return max(1.01, min(v, 20.0))  # 收紧上界
+
+    result = {}
+
+    for k in ["H", "D", "A"]:
+        v = clamp(safe_float(raw_odds.get(k)))
+
+        if v is None:
+            # 不再用 1e9（避免 bias）
+            v = 3.0
+
+        result[k] = v
+
+    return result

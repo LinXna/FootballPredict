@@ -1,63 +1,90 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-import asyncio
 import json
+import uuid
 
 from live.ws_adapter import handle_ws_event
 
 router = APIRouter()
 
-# session: ws -> match_id
-sessions = {}
+# -------------------------
+# session store (safe key)
+# -------------------------
+sessions: dict[str, WebSocket] = {}
+ws_to_match: dict[WebSocket, str] = {}
 
 
 # =========================
-# WebSocket 主入口
+# WebSocket entry
 # =========================
 @router.websocket("/ws/live")
 async def live(ws: WebSocket):
     await ws.accept()
 
+    session_id = str(uuid.uuid4())
     match_id = None
 
     try:
-        # =========================
-        # 1️⃣ 初始化连接（必须第一条消息）
-        # =========================
-        init = await ws.receive_json()
+        # -------------------------
+        # init message
+        # -------------------------
+        try:
+            init = await ws.receive_json()
+        except Exception:
+            await ws.send_json({"error": "invalid json init"})
+            await ws.close()
+            return
 
         if init.get("type") != "connect":
             await ws.send_json({"error": "first message must be connect"})
             await ws.close()
             return
 
-        match_id = init["match_id"]
-        sessions[ws] = match_id
+        match_id = init.get("match_id")
 
-        await ws.send_json({"status": "connected", "match_id": match_id})
+        if not match_id:
+            await ws.send_json({"error": "missing match_id"})
+            await ws.close()
+            return
 
-        # =========================
-        # 2️⃣ 主循环
-        # =========================
+        # bind session
+        sessions[session_id] = ws
+        ws_to_match[ws] = match_id
+
+        await ws.send_json(
+            {"status": "connected", "session_id": session_id, "match_id": match_id}
+        )
+
+        # -------------------------
+        # main loop
+        # -------------------------
         while True:
-            data = await ws.receive_json()
 
-            # =========================
-            # 2.1 心跳
-            # =========================
+            try:
+                data = await ws.receive_json()
+            except Exception:
+                await ws.send_json({"error": "invalid json"})
+                continue
+
+            # -------------------------
+            # heartbeat
+            # -------------------------
             if data.get("type") == "ping":
                 await ws.send_json({"type": "pong"})
                 continue
 
-            # =========================
-            # 2.2 业务事件
-            # =========================
+            # -------------------------
+            # business event
+            # -------------------------
             try:
                 result = handle_ws_event(match_id, data)
+
+                if result is None:
+                    raise ValueError("handler returned None")
 
                 await ws.send_json(result)
 
             except Exception as e:
-                # ❗保证连接不断
+                # error is reported but connection kept alive
                 await ws.send_json({"error": str(e), "recoverable": True})
 
     except WebSocketDisconnect:
@@ -66,12 +93,14 @@ async def live(ws: WebSocket):
     except Exception as e:
         try:
             await ws.send_json({"error": f"fatal: {str(e)}"})
-        except:
+        except Exception:
             pass
 
     finally:
-        sessions.pop(ws, None)
+        sessions.pop(session_id, None)
+        ws_to_match.pop(ws, None)
+
         try:
             await ws.close()
-        except:
+        except Exception:
             pass
