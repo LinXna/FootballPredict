@@ -1,3 +1,6 @@
+import time
+from collections import defaultdict, deque
+
 from live.state import MatchState
 from live.events import MatchEvent, EventType
 
@@ -5,71 +8,114 @@ from live.events import MatchEvent, EventType
 class EventProcessor:
 
     def __init__(self):
-        # 用于简单幂等（避免重复事件）
-        self._seen = set()
 
-    # =========================
-    # 单事件处理
-    # =========================
+        # match_id -> recent events
+        self._seen = defaultdict(deque)
+
+        # TTL for dedup (seconds equivalent proxy via size window)
+        self._max_seen = 500
+
+    # =====================================================
+    # PROCESS SINGLE EVENT
+    # =====================================================
     def process(self, state: MatchState, event: MatchEvent) -> MatchState:
 
-        # -------------------------
-        # 1. 幂等性保护（关键修复）
-        # -------------------------
-        event_key = (event.minute, event.event_type, event.team, event.player)
+        event_key = self._make_key(event)
 
-        if event_key in self._seen:
+        if self._is_duplicate(state, event_key):
             return state
 
-        self._seen.add(event_key)
+        self._mark_seen(state, event_key)
 
         # -------------------------
-        # 2. 记录事件
+        # append event
         # -------------------------
         state.events.append(event)
 
-        # =========================
-        # 3. 进球
-        # =========================
+        # -------------------------
+        # goal logic
+        # -------------------------
         if event.event_type == EventType.GOAL:
+
             if event.team == state.home:
                 state.home_score += 1
             elif event.team == state.away:
                 state.away_score += 1
 
-        # =========================
-        # 4. 乌龙球（修正逻辑）
-        # =========================
+        # -------------------------
+        # own goal logic
+        # -------------------------
         elif event.event_type == EventType.OWN_GOAL:
-            # 乌龙球：给对方加分（不依赖 event.team 归属）
+
             if event.team == state.home:
                 state.away_score += 1
             elif event.team == state.away:
                 state.home_score += 1
 
-        # =========================
-        # 5. 时间更新（防回退污染）
-        # =========================
+        # -------------------------
+        # time update
+        # -------------------------
         if event.minute > state.minute:
             state.minute = event.minute
 
-        # =========================
-        # 6. 状态机更新（简化修复）
-        # =========================
-        if state.status != "FT":
-            if state.minute >= 90:
-                state.status = "FT"
-            elif state.minute >= 45 and state.status == "1H":
-                state.status = "2H"
+        # -------------------------
+        # state transition
+        # -------------------------
+        self._update_status(state)
 
         return state
 
-    # =========================
-    # 批量处理
-    # =========================
+    # =====================================================
+    # BATCH PROCESS
+    # =====================================================
     def process_all(self, state: MatchState, events: list[MatchEvent]) -> MatchState:
 
+        # assume upstream may or may not sort → safe idempotent
         for event in sorted(events, key=lambda e: e.minute):
             state = self.process(state, event)
 
         return state
+
+    # =====================================================
+    # KEY GENERATION (stronger)
+    # =====================================================
+    def _make_key(self, event: MatchEvent):
+
+        return (
+            event.minute,
+            event.event_type.value,
+            event.team,
+            event.player,
+        )
+
+    # =====================================================
+    # DEDUP CONTROL (bounded memory)
+    # =====================================================
+    def _is_duplicate(self, state: MatchState, key):
+
+        dq = self._seen[id(state)]
+
+        return key in dq
+
+    def _mark_seen(self, state: MatchState, key):
+
+        dq = self._seen[id(state)]
+
+        dq.append(key)
+
+        if len(dq) > self._max_seen:
+            dq.popleft()
+
+    # =====================================================
+    # STATE MACHINE (cleaned)
+    # =====================================================
+    def _update_status(self, state: MatchState):
+
+        if state.status == "FT":
+            return
+
+        if state.minute >= 90:
+            state.status = "FT"
+
+        elif state.minute >= 45 and state.status == "1H":
+            state.status = "2H"

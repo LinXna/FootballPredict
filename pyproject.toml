@@ -1,14 +1,17 @@
 [project]
-name = "football-v2"
-version = "0.1.0"
-requires-python = ">=3.9"
+name = "footballpredict"
+version = "2.0.0"
+description = "Statistical + Live Football Prediction System"
+requires-python = ">=3.10"
 
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+]
 
-[tool.setuptools]
-package-dir = {"" = "."}
+[tool.black]
+line-length = 88
 
-[tool.setuptools.packages.find]
-where = ["."]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

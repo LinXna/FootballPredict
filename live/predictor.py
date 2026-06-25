@@ -5,60 +5,92 @@ from core.pipeline import Pipeline
 class LivePredictor:
 
     def __init__(self, pipeline: Pipeline):
+
         self.pipeline = pipeline
+
+        # adjuster now PURE weight scaler
         self.adjuster = LiveAdjuster()
 
-    # =========================
-    # 主入口
-    # =========================
+    # =====================================================
+    # MAIN PREDICT
+    # =====================================================
     def predict(self, state):
-        """
-        输入：
-            MatchState
-
-        输出：
-            {"H": x, "D": x, "A": x}
-        """
 
         # -------------------------
-        # 1. 基础模型（安全调用）
+        # 1. base prediction
         # -------------------------
+        base = self._safe_base_predict(state)
+
+        if not base:
+            return self._default_prob()
+
+        # -------------------------
+        # 2. live adjustment (FIXED INTERFACE)
+        # -------------------------
+        adjusted = self._apply_adjustment(base)
+
+        # -------------------------
+        # 3. normalization
+        # -------------------------
+        return self._normalize(adjusted)
+
+    # =====================================================
+    # SAFE PIPELINE CALL
+    # =====================================================
+    def _safe_base_predict(self, state):
+
         try:
-            base = self.pipeline.predict(state.home, state.away)
+            return self.pipeline.predict(state.home, state.away)
         except Exception:
-            return {"H": 0.33, "D": 0.34, "A": 0.33}
+            return None
 
-        if base is None:
-            return {"H": 0.33, "D": 0.34, "A": 0.33}
+    # =====================================================
+    # ADJUSTMENT (FIXED: no state leakage)
+    # =====================================================
+    def _apply_adjustment(self, base):
 
-        # -------------------------
-        # 2. LIVE adjustment
-        # -------------------------
         try:
-            live_prob = self.adjuster.adjust(base, state)
+            # convert prob → pseudo delta weights
+            delta = {
+                "elo": (base.get("H", 0) - 0.33),
+                "poisson": (base.get("A", 0) - 0.33),
+            }
+
+            adjusted = self.adjuster.adjust(delta)
+
+            # merge adjustment softly (no overwrite)
+            return {k: base.get(k, 0.33) * adjusted.get("elo", 0.5) for k in base}
+
         except Exception:
-            live_prob = base
+            return base
 
-        # -------------------------
-        # 3. 安全归一化
-        # -------------------------
+    # =====================================================
+    # NORMALIZATION
+    # =====================================================
+    def _normalize(self, prob):
+
         try:
-            total = sum(live_prob.values())
+            total = sum(prob.values())
 
             if total <= 0:
-                return {"H": 0.33, "D": 0.34, "A": 0.33}
+                return self._default_prob()
 
-            normalized = {k: v / total for k, v in live_prob.items()}
-
-            return normalized
+            return {k: v / total for k, v in prob.items()}
 
         except Exception:
-            return {"H": 0.33, "D": 0.34, "A": 0.33}
+            return self._default_prob()
 
-    # =========================
-    # 调试接口（限制风险）
-    # =========================
+    # =====================================================
+    # DEFAULT
+    # =====================================================
+    def _default_prob(self):
+        return {"H": 0.33, "D": 0.34, "A": 0.33}
+
+    # =====================================================
+    # RAW DEBUG
+    # =====================================================
     def predict_raw(self, state):
+
         try:
             return self.pipeline.predict(state.home, state.away)
         except Exception:

@@ -1,97 +1,18 @@
-from learning.result_buffer import ResultBuffer
+from learning.reward_engine import RewardEngine
 
 
-class FeedbackLoop:
-    """
-    V2.0 AI Adaptive Feedback System
+class Feedback:
 
-    Upgrade Goals:
-    ✔ 防重复学习（duplicate guard）
-    ✔ 稳定 batch trigger
-    ✔ context-aware learning
-    ✔ 兼容 LiveManager
-    ✔ 避免噪声训练
-    """
-
-    def __init__(self, updater, max_buffer_size=50):
-
-        # =========================
-        # Core dependency
-        # =========================
+    def __init__(self, updater):
+        self.reward_engine = RewardEngine()
         self.updater = updater
 
-        # =========================
-        # Buffer
-        # =========================
-        self.buffer = ResultBuffer()
-        self.max_buffer_size = max_buffer_size
+    def process(self, pred, actual):
 
-        # =========================
-        # Anti-duplication cache
-        # =========================
-        self._seen = set()
+        reward = self.reward_engine.compute(pred, actual)
 
-    # =========================================================
-    # Public API
-    # =========================================================
+        reward = max(-1.0, min(1.0, reward))
 
-    def record(self, prediction, result, context=None):
+        self.updater.update(pred, actual, reward)
 
-        context = context or {}
-
-        match_id = context.get("match_id")
-
-        # =========================
-        # 1️⃣ 防重复学习（关键）
-        # =========================
-        if match_id in self._seen:
-            return 0
-
-        self._seen.add(match_id)
-
-        # =========================
-        # 2️⃣ 构造样本
-        # =========================
-        sample = {"prediction": prediction, "result": result, "context": context}
-
-        self.buffer.add(sample)
-
-        # =========================
-        # 3️⃣ Batch trigger
-        # =========================
-        if self.buffer.ready() or self._force_flush():
-
-            samples = self.buffer.samples()
-
-            self.updater.batch_update(samples)
-
-            self.buffer.clear()
-
-            return len(samples)
-
-        return 0
-
-    # =========================================================
-    # Internal logic
-    # =========================================================
-
-    def _force_flush(self):
-
-        return len(self.buffer.samples()) >= self.max_buffer_size
-
-    # =========================================================
-    # Reset mechanism (for live restart safety)
-    # =========================================================
-
-    def reset(self):
-
-        self.buffer.clear()
-        self._seen.clear()
-
-    def __repr__(self):
-
-        return (
-            f"FeedbackLoop("
-            f"buffer_size={len(self.buffer.samples())}, "
-            f"seen={len(self._seen)})"
-        )
+        return reward

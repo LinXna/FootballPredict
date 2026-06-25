@@ -1,7 +1,4 @@
-"""
-live/pipeline.py
-LIVE SYSTEM V1.5
-"""
+from copy import deepcopy
 
 from live.state import MatchState
 from live.queue import EventQueue
@@ -14,6 +11,7 @@ from live.state_store import StateStore
 class LivePipeline:
 
     def __init__(self, core_pipeline):
+
         self.predictor = LivePredictor(core_pipeline)
 
         self.queue = EventQueue()
@@ -21,45 +19,70 @@ class LivePipeline:
 
         self.store = StateStore()
 
-    # =========================
-    # 初始化比赛（统一入口）
-    # =========================
+    # =====================================================
+    # INIT MATCH
+    # =====================================================
     def start_match(self, match_id: str, home: str, away: str):
+
+        if match_id in self.store.states:
+            raise ValueError(f"Match already exists: {match_id}")
+
         state = MatchState(home, away)
+
         self.store.states[match_id] = state
 
-    # =========================
-    # 推送事件（match_id safe）
-    # =========================
+    # =====================================================
+    # PUSH EVENT (single entry only)
+    # =====================================================
     def push_event(self, match_id: str, event: MatchEvent):
+
+        if match_id not in self.store.states:
+            raise ValueError(f"Match not initialized: {match_id}")
+
         self.queue.push(match_id, event)
 
-    # =========================
-    # step（核心实时处理）
-    # =========================
-    def step(self, match_id, event: MatchEvent):
+    # =====================================================
+    # STEP (core runtime loop)
+    # =====================================================
+    def step(self, match_id: str, event: MatchEvent):
 
+        # ensure match exists BEFORE processing
+        if match_id not in self.store.states:
+            raise ValueError(f"Match not initialized: {match_id}")
+
+        # single ingestion point
         self.queue.push(match_id, event)
 
         state = self.store.get(match_id)
 
         if state is None:
-            raise ValueError(f"Match not initialized: {match_id}")
+            raise ValueError(f"State missing: {match_id}")
 
-        # process queue safely
+        errors = []
+
+        # process queue
         while not self.queue.is_empty(match_id):
+
             e = self.queue.pop(match_id)
 
             try:
                 state = self.processor.process(state, e)
-            except Exception:
+
+            except Exception as ex:
+                # collect error instead of silent drop
+                errors.append({"event": str(e), "error": str(ex)})
                 continue
 
-        # persist state
+        # persist updated state
         self.store.states[match_id] = state
 
-        # safe predict
+        # snapshot for prediction (CRITICAL FIX)
+        state_snapshot = deepcopy(state)
+
         try:
-            return self.predictor.predict(state)
+            prediction = self.predictor.predict(state_snapshot)
+
         except Exception:
-            return None
+            prediction = None
+
+        return {"prediction": prediction, "errors": errors if errors else None}

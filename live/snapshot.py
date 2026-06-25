@@ -7,6 +7,8 @@ from copy import deepcopy
 class Snapshot:
     match_id: str
     minute: int
+
+    # strictly normalized payloads
     event: Dict[str, Any]
     state: Dict[str, Any]
     prob: Dict[str, Any]
@@ -14,49 +16,91 @@ class Snapshot:
 
 class SnapshotStore:
     """
-    V1.7 Snapshot System
+    Clean V2 Snapshot System
 
-    职责：
-        - 记录 runtime 每一步完整状态
-        - 支持 live vs replay 对比
+    目标：
+    - deterministic replay
+    - stable evaluation
+    - no hidden learning coupling
     """
 
     def __init__(self):
         self._snapshots: Dict[str, List[Snapshot]] = {}
 
-    # =========================
-    # 1️⃣ 写入 snapshot
-    # =========================
+    # =====================================================
+    # RECORD SNAPSHOT (safe normalization)
+    # =====================================================
     def record(self, match_id: str, minute: int, event, state, prob):
+
         if match_id not in self._snapshots:
             self._snapshots[match_id] = []
 
         snap = Snapshot(
             match_id=match_id,
             minute=minute,
-            event=deepcopy(event.__dict__ if hasattr(event, "__dict__") else event),
-            state=deepcopy(state.__dict__ if hasattr(state, "__dict__") else state),
+            event=self._normalize(event),
+            state=self._normalize(state),
             prob=deepcopy(prob),
         )
 
         self._snapshots[match_id].append(snap)
 
-    # =========================
-    # 2️⃣ 获取全部 snapshot
-    # =========================
+    # =====================================================
+    # NORMALIZATION (CRITICAL FIX)
+    # =====================================================
+    def _normalize(self, obj):
+
+        if obj is None:
+            return {}
+
+        # dataclass
+        if hasattr(obj, "__dict__"):
+            return deepcopy(obj.__dict__)
+
+        # dict
+        if isinstance(obj, dict):
+            return deepcopy(obj)
+
+        # fallback safe cast
+        return {"value": str(obj)}
+
+    # =====================================================
+    # GET ALL
+    # =====================================================
     def get_all(self, match_id: str) -> List[Snapshot]:
+
         return self._snapshots.get(match_id, [])
 
-    # =========================
-    # 3️⃣ 对比一致性
-    # =========================
+    # =====================================================
+    # CONSISTENCY COMPARE (improved)
+    # =====================================================
     def compare(self, match_id: str, replay_snapshots: List[Snapshot]):
+
         live = self._snapshots.get(match_id, [])
 
         diff = []
 
         for l, r in zip(live, replay_snapshots):
-            if l.state != r.state or l.prob != r.prob:
+
+            if self._diff(l.state, r.state) or self._diff(l.prob, r.prob):
                 diff.append({"minute": l.minute, "live": l, "replay": r})
 
         return diff
+
+    # =====================================================
+    # DEEP SAFE DIFF
+    # =====================================================
+    def _diff(self, a: Dict[str, Any], b: Dict[str, Any]) -> bool:
+
+        if a.keys() != b.keys():
+            return True
+
+        for k in a:
+            if isinstance(a[k], float) and isinstance(b[k], float):
+                if abs(a[k] - b[k]) > 1e-6:
+                    return True
+            else:
+                if a[k] != b[k]:
+                    return True
+
+        return False

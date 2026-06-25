@@ -6,48 +6,67 @@ from copy import deepcopy
 @dataclass
 class StateSnapshot:
     minute: int
-    state: Any
+    state: Dict[str, Any]
 
 
 class StateStore:
     """
-    V1.7 StateStore
+    Clean V2 StateStore
 
     职责：
-        - 记录 MatchState 时间序列
-        - 支持 replay
-        - 支持 debug
+    - deterministic state ledger
+    - replay support
+    - evaluation support
     """
 
     def __init__(self):
+
         # match_id -> List[StateSnapshot]
         self._store: Dict[str, List[StateSnapshot]] = {}
 
-    # =========================
-    # 1️⃣ 写入状态
-    # =========================
+    # =====================================================
+    # APPEND STATE
+    # =====================================================
     def append(self, match_id: str, minute: int, state: Any):
-        """
-        追加状态快照
-        """
 
         if match_id not in self._store:
             self._store[match_id] = []
 
-        snapshot = StateSnapshot(minute=minute, state=deepcopy(state))
+        snapshot = StateSnapshot(
+            minute=minute,
+            state=self._normalize(state),
+        )
 
         self._store[match_id].append(snapshot)
 
-    # =========================
-    # 2️⃣ 获取完整历史
-    # =========================
+    # =====================================================
+    # NORMALIZATION (CRITICAL FIX)
+    # =====================================================
+    def _normalize(self, state: Any) -> Dict[str, Any]:
+
+        if state is None:
+            return {}
+
+        if isinstance(state, dict):
+            return deepcopy(state)
+
+        if hasattr(state, "__dict__"):
+            return deepcopy(state.__dict__)
+
+        return {"value": str(state)}
+
+    # =====================================================
+    # HISTORY
+    # =====================================================
     def get_history(self, match_id: str) -> List[StateSnapshot]:
+
         return self._store.get(match_id, [])
 
-    # =========================
-    # 3️⃣ 获取某一分钟状态
-    # =========================
+    # =====================================================
+    # MINUTE QUERY
+    # =====================================================
     def get_at_minute(self, match_id: str, minute: int):
+
         history = self._store.get(match_id, [])
 
         for snap in history:
@@ -56,10 +75,11 @@ class StateStore:
 
         return None
 
-    # =========================
-    # 4️⃣ 获取最新状态
-    # =========================
+    # =====================================================
+    # LATEST STATE
+    # =====================================================
     def latest(self, match_id: str):
+
         history = self._store.get(match_id, [])
 
         if not history:
@@ -67,13 +87,19 @@ class StateStore:
 
         return history[-1].state
 
-    # =========================
-    # 5️⃣ 回放支持（Replay基础）
-    # =========================
-    def get_event_timeline(self, match_id: str):
-        """
-        返回按时间排序的 state 序列
-        """
+    # =====================================================
+    # TIMELINE (FIXED SEMANTICS)
+    # =====================================================
+    def get_state_timeline(self, match_id: str):
 
         history = self._store.get(match_id, [])
+
         return sorted(history, key=lambda x: x.minute)
+
+    # =====================================================
+    # CLEAR MATCH (ADDED SAFETY)
+    # =====================================================
+    def clear(self, match_id: str):
+
+        if match_id in self._store:
+            del self._store[match_id]

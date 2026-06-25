@@ -4,14 +4,17 @@ from collections import defaultdict
 
 class PoissonModel:
 
-    def __init__(self):
+    def __init__(self, league_avg_goals=1.35):
 
-        # =========================
-        # V1-FREEZE: attack/defense ratings
-        # =========================
+        # attack/defense strength
         self.team_attack = defaultdict(lambda: 1.0)
         self.team_defense = defaultdict(lambda: 1.0)
 
+        self.league_avg = league_avg_goals
+
+    # =====================================================
+    # TRAIN (heuristic but stabilized)
+    # =====================================================
     def train(self, matches):
 
         for m in matches:
@@ -20,9 +23,7 @@ class PoissonModel:
             away = m["away"]
             result = m["result"]
 
-            # =========================
-            # V1-FREEZE: surrogate goal model (not real xG)
-            # =========================
+            # NOTE: still heuristic proxy (not real xG)
             if result == "H":
                 home_goals, away_goals = 2, 1
             elif result == "A":
@@ -30,57 +31,67 @@ class PoissonModel:
             else:
                 home_goals, away_goals = 1, 1
 
+            # update attack/defense
             self.team_attack[home] += home_goals * 0.1
             self.team_defense[away] += home_goals * 0.1
 
             self.team_attack[away] += away_goals * 0.1
             self.team_defense[home] += away_goals * 0.1
 
+    # =====================================================
+    # STABLE POISSON (log-space)
+    # =====================================================
     def poisson(self, lam, k):
 
-        # =========================
-        # V1-FREEZE: numerical stability
-        # =========================
-        lam = max(0.01, lam)
+        lam = max(lam, 1e-6)
 
-        return (lam**k * math.exp(-lam)) / math.factorial(k)
+        # log Poisson for stability
+        log_p = k * math.log(lam) - lam - math.lgamma(k + 1)
 
+        return math.exp(log_p)
+
+    # =====================================================
+    # LAMBDA ESTIMATION (calibrated)
+    # =====================================================
+    def _lambda(self, attack, defense):
+
+        return max(0.05, self.league_avg * (attack / max(defense, 1e-3)))
+
+    # =====================================================
+    # SCORE MATRIX
+    # =====================================================
     def predict_score_probs(self, home, away, max_goals=5):
 
-        home_attack = self.team_attack[home]
-        away_defense = self.team_defense[away]
+        home_lambda = self._lambda(self.team_attack[home], self.team_defense[away])
 
-        away_attack = self.team_attack[away]
-        home_defense = self.team_defense[home]
-
-        # =========================
-        # V1-FREEZE: stable lambda estimation
-        # =========================
-        home_lambda = max(0.05, home_attack / max(away_defense, 0.1))
-
-        away_lambda = max(0.05, away_attack / max(home_defense, 0.1))
+        away_lambda = self._lambda(self.team_attack[away], self.team_defense[home])
 
         matrix = {}
 
-        # =========================
-        # V1-FREEZE: truncated score space (0-5 goals)
-        # =========================
+        total = 0.0
+
         for i in range(max_goals + 1):
             for j in range(max_goals + 1):
 
                 p = self.poisson(home_lambda, i) * self.poisson(away_lambda, j)
 
                 matrix[(i, j)] = p
+                total += p
+
+        # normalize (CRITICAL FIX)
+        for k in matrix:
+            matrix[k] /= total
 
         return matrix
 
+    # =====================================================
+    # 1X2 AGGREGATION
+    # =====================================================
     def predict_1x2(self, home, away):
 
         score_probs = self.predict_score_probs(home, away)
 
-        H = 0
-        D = 0
-        A = 0
+        H = D = A = 0.0
 
         for (i, j), p in score_probs.items():
 

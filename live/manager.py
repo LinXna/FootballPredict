@@ -8,43 +8,32 @@ from core.pipeline import Pipeline
 from live.events import MatchEvent
 from live.snapshot import SnapshotStore
 
-from evolution.self_learning.feedback import FeedbackLoop
-from learning.weight_updater import WeightUpdater
-
 
 class LiveManager:
     """
-    V2.0 AI Adaptive Live Manager
-
-    Upgrade:
-    ✔ Online learning integration
-    ✔ Safe learning trigger
-    ✔ Runtime isolation
-    ✔ TTL GC system
-    ✔ Self-learning loop binding
-    ✔ No duplicate training
+    Clean V2 LiveManager (NO learning side effects)
     """
 
     def __init__(self, core_pipeline: Pipeline):
 
         # =========================
-        # Core dependency
+        # Core
         # =========================
         self.core_pipeline = core_pipeline
 
         # =========================
-        # Runtime state
+        # State
         # =========================
         self.runtimes: Dict[str, MatchRuntime] = {}
         self.last_active: Dict[str, float] = {}
 
         # =========================
-        # Concurrency lock
+        # Lock
         # =========================
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         # =========================
-        # Snapshot system
+        # Snapshot
         # =========================
         self.snapshot_store = SnapshotStore()
 
@@ -54,31 +43,25 @@ class LiveManager:
         self.predictor = LivePredictor(core_pipeline)
 
         # =========================
-        # V2.0 Adaptive Learning
+        # TTL
         # =========================
-        self.weight_updater = WeightUpdater()
-        self.feedback_loop = FeedbackLoop(self.weight_updater)
+        self.match_ttl = 60 * 30
 
         # =========================
-        # TTL config
+        # GC control
         # =========================
-        self.match_ttl = 60 * 30  # 30 minutes
-
-        # =========================
-        # Start GC thread
-        # =========================
+        self._stop_gc = False
         self._start_gc_thread()
 
-    # =========================================================
-    # Match lifecycle
-    # =========================================================
-
+    # =====================================================
+    # CREATE MATCH
+    # =====================================================
     def create_match(self, match_id: str, home: str, away: str):
 
         with self._lock:
 
             if match_id in self.runtimes:
-                raise ValueError("Match already exists")
+                raise ValueError("Match exists")
 
             runtime = MatchRuntime(match_id=match_id, predictor=self.predictor)
 
@@ -90,26 +73,30 @@ class LiveManager:
 
         return {"status": "created", "match_id": match_id}
 
-    # =========================================================
-    # Event handling
-    # =========================================================
-
-    def handle_event(self, match_id: str, event: MatchEvent):
+    # =====================================================
+    # GET RUNTIME
+    # =====================================================
+    def get_runtime(self, match_id: str) -> MatchRuntime:
 
         with self._lock:
-            runtime = self.runtimes.get(match_id)
+            if match_id not in self.runtimes:
+                raise ValueError(f"Match not found: {match_id}")
+            return self.runtimes[match_id]
 
-        if runtime is None:
-            return None
+    # =====================================================
+    # HANDLE EVENT
+    # =====================================================
+    def handle_event(self, match_id: str, event: MatchEvent):
+
+        runtime = self.get_runtime(match_id)
 
         self.last_active[match_id] = time.time()
 
         return runtime.step(event)
 
-    # =========================================================
-    # State query
-    # =========================================================
-
+    # =====================================================
+    # STATE
+    # =====================================================
     def get_state(self, match_id: str):
 
         runtime = self.get_runtime(match_id)
@@ -124,79 +111,41 @@ class LiveManager:
             "prob": runtime.predict(),
         }
 
-    def get_runtime(self, match_id: str):
+    # =====================================================
+    # REMOVE MATCH
+    # =====================================================
+    def remove_match(self, match_id: str):
 
-        runtime = self.runtimes.get(match_id)
+        with self._lock:
+            self.runtimes.pop(match_id, None)
+            self.last_active.pop(match_id, None)
 
-        if runtime is None:
-            raise ValueError(f"Match not found: {match_id}")
+        return {"status": "removed", "match_id": match_id}
 
-        return runtime
-
-    # =========================================================
-    # Match finished → AI Learning Hook
-    # =========================================================
-
-    def on_match_finished(self, match_id: str, actual_result: int):
-
-        runtime = self.runtimes.get(match_id)
-
-        if runtime is None:
-            return
-
-        # =========================
-        # 1️⃣ 获取缓存预测
-        # =========================
-        pred = runtime.last_prediction
-
-        if pred is None:
-            return
-
-        # =========================
-        # 2️⃣ 触发学习（核心）
-        # =========================
-        reward = self.feedback_loop.record(
-            prediction=pred,
-            result=actual_result,
-            context={"match_id": match_id, "minute": runtime.state.minute},
-        )
-
-        # =========================
-        # 3️⃣ 更新权重日志
-        # =========================
-        if reward > 0:
-            print(f"[V2.0 LEARN] match={match_id} samples={reward}")
-
-        # =========================
-        # 4️⃣ 可选释放 runtime
-        # =========================
-        # self.runtimes.pop(match_id, None)
-
-    # =========================================================
-    # GC system
-    # =========================================================
-
+    # =====================================================
+    # CLEANUP
+    # =====================================================
     def cleanup(self):
 
         now = time.time()
         to_remove = []
 
-        for match_id, last in self.last_active.items():
+        with self._lock:
 
-            if now - last > self.match_ttl:
-                to_remove.append(match_id)
+            for match_id, last_time in self.last_active.items():
+                if now - last_time > self.match_ttl:
+                    to_remove.append(match_id)
 
-        for match_id in to_remove:
+            for match_id in to_remove:
+                self.runtimes.pop(match_id, None)
+                self.last_active.pop(match_id, None)
 
-            print(f"[GC] removing match {match_id}")
-
-            self.runtimes.pop(match_id, None)
-            self.last_active.pop(match_id, None)
-
+    # =====================================================
+    # GC LOOP
+    # =====================================================
     def _gc_loop(self):
 
-        while True:
-
+        while not self._stop_gc:
             time.sleep(60)
             self.cleanup()
 
@@ -204,3 +153,9 @@ class LiveManager:
 
         t = threading.Thread(target=self._gc_loop, daemon=True)
         t.start()
+
+    # =====================================================
+    # SHUTDOWN SAFE
+    # =====================================================
+    def shutdown(self):
+        self._stop_gc = True

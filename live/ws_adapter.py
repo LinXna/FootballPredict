@@ -1,41 +1,68 @@
 from live.manager import LiveManager
+from live.events import MatchEvent, EventType
 
-# ⚠️ 这里应该是你全局单例
 from app.main import live_manager
 
 
-# =========================
-# WebSocket 业务适配层
-# =========================
-def handle_ws_event(match_id: str, data: dict):
-    """
-    WS → Runtime 转换层
-    """
+# =====================================================
+# EVENT PARSER (CRITICAL FIX)
+# =====================================================
+def _parse_event(data: dict) -> MatchEvent:
 
-    runtime = live_manager.runtimes.get(match_id)
+    event_type = data.get("event_type", "unknown")
+
+    try:
+        event_type = EventType(event_type)
+    except Exception:
+        event_type = EventType.UNKNOWN
+
+    return MatchEvent(
+        minute=int(data.get("minute", 0)),
+        event_type=event_type,
+        team=data.get("team"),
+        player=data.get("player"),
+        payload=data.get("payload", {}),
+    )
+
+
+# =====================================================
+# WS HANDLER
+# =====================================================
+def handle_ws_event(match_id: str, data: dict):
+
+    # -------------------------
+    # runtime via manager (FIXED)
+    # -------------------------
+    runtime = live_manager.get_runtime(match_id)
 
     if runtime is None:
         return {"error": f"match not found: {match_id}"}
 
-    # =========================
-    # 构造 event（轻量版）
-    # =========================
-    event = data  # V1.7先直接透传（后续可强化 schema）
+    # -------------------------
+    # SAFE EVENT CONVERSION
+    # -------------------------
+    try:
+        event = _parse_event(data)
+    except Exception as ex:
+        return {"error": f"invalid event: {str(ex)}"}
 
-    # =========================
-    # 执行 runtime
-    # =========================
+    # -------------------------
+    # EXECUTE
+    # -------------------------
     result = runtime.step(event)
 
-    # =========================
-    # 确保 JSON安全
-    # =========================
+    # -------------------------
+    # SAFE RESPONSE
+    # -------------------------
+    state = runtime.state
+
     return {
         "match_id": match_id,
         "state": {
-            "home_score": runtime.state.home_score,
-            "away_score": runtime.state.away_score,
-            "minute": runtime.state.minute,
+            "home_score": state.home_score,
+            "away_score": state.away_score,
+            "minute": state.minute,
         },
-        "prob": result["prob"] if isinstance(result, dict) else result,
+        "prob": result.get("prob") if isinstance(result, dict) else result,
     }
+5

@@ -1,2 +1,84 @@
+# =========================
+# Python cache
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+
+.Python
+env/
+venv/
+.venv/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Runtime / Live system
+# =========================
+runtime/
+live_cache/
+snapshots/
+state_dump/
+replay_cache/
+
+# =========================
+# ML / Learning artifacts
+# =========================
+models/checkpoints/
+models/*.bin
+models/*.pkl
+models/*.pt
+
+learning/checkpoints/
+learning/cache/
+evolution/cache/
+
+# =========================
+# Data (CRITICAL)
+# =========================
+data/cache/
+data/tmp/
+*.csv.bak
+
+# If you don't want raw matches tracked:
+# data/real_matches.csv
+
+# =========================
+# Testing / coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# OS noise
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# =========================
+# Optional: local config
+# =========================
+.env
+config.local.json
+
+repomix-output.xml

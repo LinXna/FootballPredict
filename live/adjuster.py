@@ -14,6 +14,65 @@ from live.state import MatchState
 
 class LiveAdjuster:
     """
+    Safe runtime weight adjuster (NO learning side effects)
+    """
+
+    def __init__(self):
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+
+        self.min_w = 0.05
+        self.max_w = 0.95
+
+    def adjust(self, weights_delta):
+        """
+        weights_delta:
+            {
+                "elo": float,
+                "poisson": float
+            }
+        """
+
+        if not isinstance(weights_delta, dict):
+            return self.weights
+
+        updated = {}
+
+        for k in ["elo", "poisson"]:
+
+            try:
+                delta = float(weights_delta.get(k, 0.0))
+            except Exception:
+                delta = 0.0
+
+            current = self.weights.get(k, 0.5)
+
+            # safe additive adjustment (bounded)
+            new_w = current + delta
+
+            # clamp
+            new_w = max(self.min_w, min(self.max_w, new_w))
+
+            updated[k] = new_w
+
+        # normalize to prevent drift explosion
+        total = sum(updated.values())
+
+        if total <= 0:
+            self.weights = {"elo": 0.5, "poisson": 0.5}
+            return self.weights
+
+        self.weights = {k: v / total for k, v in updated.items()}
+
+        return self.weights
+
+    def get(self):
+        return self.weights.copy()
+
+    def reset(self):
+        self.weights = {"elo": 0.5, "poisson": 0.5}
+        return self.weights
+
+    """
     简单动态调整模型（V1）
     """
 

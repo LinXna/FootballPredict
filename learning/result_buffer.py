@@ -2,25 +2,19 @@ from collections import deque
 
 
 class ResultBuffer:
-    """
-    保存最近N场比赛结果
-    防止单场比赛立即更新权重
-    """
 
-    def __init__(self, max_size=50):
+    def __init__(self, max_size=500):
         self.buffer = deque(maxlen=max_size)
 
-    def add(self, sample):
-        self.buffer.append(sample)
+    def push(self, result):
 
-    def ready(self):
-        return len(self.buffer) >= 20
+        if not isinstance(result, dict):
+            return
 
-    def samples(self):
+        if "pred" not in result or "actual" not in result:
+            return
+
+        self.buffer.append(result)
+
+    def get_all(self):
         return list(self.buffer)
-
-    def clear(self):
-        self.buffer.clear()
-
-    def __len__(self):
-        return len(self.buffer)

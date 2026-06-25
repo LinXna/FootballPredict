@@ -1,20 +1,24 @@
+from collections import deque
+
+
 class ReplayBuffer:
-    """
-    Stores past matches for reinforcement learning
-    """
 
-    def __init__(self, max_size=500):
-
-        self.buffer = []
-        self.max_size = max_size
+    def __init__(self, max_size=1000):
+        self.buffer = deque(maxlen=max_size)
 
     def add(self, sample):
 
+        if not isinstance(sample, dict):
+            return
+
+        required = ["home", "away", "result"]
+        if not all(k in sample for k in required):
+            return
+
         self.buffer.append(sample)
 
-        if len(self.buffer) > self.max_size:
-            self.buffer.pop(0)
+    def sample(self, n=32):
 
-    def sample(self, batch_size=32):
+        n = min(n, len(self.buffer))
 
-        return self.buffer[-batch_size:]
+        return list(self.buffer)[-n:]
