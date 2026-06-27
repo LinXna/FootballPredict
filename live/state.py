@@ -1,94 +1,41 @@
 from dataclasses import dataclass, field
 from typing import List, Any, Dict
-from copy import deepcopy
 
 
 @dataclass
 class MatchState:
-    """
-    Stable V2 MatchState
-
-    目标：
-    - deterministic snapshot
-    - safe serialization
-    - no external mutation leak
-    """
-
-    # =========================
-    # basic info
-    # =========================
+    match_id: str
     home: str
     away: str
 
-    # =========================
-    # match state
-    # =========================
     minute: int = 0
-    status: str = "NS"  # NS / 1H / HT / 2H / ET / FT
-
-    # =========================
-    # score
-    # =========================
     home_score: int = 0
     away_score: int = 0
+    status: str = "NS"
 
-    # =========================
-    # events (protected)
-    # =========================
-    events: List[Any] = field(default_factory=list)
+    events: List[Dict[str, Any]] = field(default_factory=list)
 
-    # =====================================================
-    # SCORE
-    # =====================================================
-    @property
-    def score(self) -> str:
-        return f"{self.home_score}-{self.away_score}"
+    def apply_event(self, event: dict):
+        self.events.append(event)
+        self.minute = max(self.minute, event.get("minute", self.minute))
 
-    # =====================================================
-    # FINISHED
-    # =====================================================
-    def is_finished(self) -> bool:
-        return self.status == "FT"
+        et = event.get("type")
 
-    # =====================================================
-    # RESET
-    # =====================================================
-    def reset(self) -> None:
-        self.minute = 0
-        self.status = "NS"
-        self.home_score = 0
-        self.away_score = 0
-        self.events.clear()
+        if et == "goal":
+            team = event.get("team")
+            if team == self.home:
+                self.home_score += 1
+            elif team == self.away:
+                self.away_score += 1
 
-    # =====================================================
-    # SAFE SERIALIZATION (CRITICAL FIX)
-    # =====================================================
-    def to_dict(self) -> Dict[str, Any]:
+    def score(self):
+        return {"H": self.home_score, "A": self.away_score}
 
+    def to_dict(self):
         return {
             "home": self.home,
             "away": self.away,
             "minute": self.minute,
+            "score": self.score(),
             "status": self.status,
-            "home_score": self.home_score,
-            "away_score": self.away_score,
-            "events": deepcopy(self.events),
         }
-
-    # =====================================================
-    # SAFE EVENT ACCESS
-    # =====================================================
-    def get_events(self) -> List[Any]:
-        return list(self.events)
-
-    # =====================================================
-    # STRING
-    # =====================================================
-    def __str__(self) -> str:
-        return (
-            f"[{self.status}] "
-            f"{self.home} "
-            f"{self.home_score}-{self.away_score} "
-            f"{self.away} "
-            f"({self.minute}')"
-        )

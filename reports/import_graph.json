@@ -1,0 +1,139 @@
+{
+  "..app.api": [
+    "live.events",
+    "core.pipeline",
+    "pydantic",
+    "live.pipeline",
+    "fastapi",
+    "live.manager"
+  ],
+  "..app.main": [
+    "core.pipeline",
+    "fastapi"
+  ],
+  "..app.run": [
+    "data.loader",
+    "evaluation.backtest",
+    "os",
+    "core.pipeline",
+    "evaluation.benchmark",
+    "evaluation.value_engine",
+    "evaluation.betting"
+  ],
+  "..app.websocket": [
+    "app.main",
+    "live.ws_adapter",
+    "fastapi"
+  ],
+  "..core.constants": [
+    "enum"
+  ],
+  "..core.pipeline": [
+    "models.elo_model",
+    "data.odds_calibrator",
+    "ensemble.fusion",
+    "models.poisson_model"
+  ],
+  "..core.schema": [
+    "typing"
+  ],
+  "..data.real_matches": [
+    "data.match_normalizer",
+    "csv",
+    "data.odds_normalizer",
+    "logging"
+  ],
+  "..evolution.calibrator": [
+    "numpy"
+  ],
+  "..evolution.drift_detector": [
+    "numpy"
+  ],
+  "..evolution.online_learner": [
+    "math"
+  ],
+  "..features.builder": [
+    "features.h2h",
+    "features.form"
+  ],
+  "..features.form": [
+    "collections"
+  ],
+  "..features.h2h": [
+    "collections"
+  ],
+  "..live.adjuster": [
+    "live.state"
+  ],
+  "..live.engine": [
+    "core.learning_engine",
+    "live.state",
+    "copy",
+    "live.queue"
+  ],
+  "..live.events": [
+    "enum",
+    "typing",
+    "datetime",
+    "dataclasses"
+  ],
+  "..live.manager": [
+    "live.runtime",
+    "live.events",
+    "live.snapshot",
+    "threading",
+    "time",
+    "core.pipeline",
+    "typing",
+    "live.predictor"
+  ],
+  "..live.pipeline": [
+    "live.events",
+    "copy",
+    "live.queue",
+    "live.predictor",
+    "live.state",
+    "live.processor",
+    "live.state_store"
+  ],
+  "..live.predictor": [
+    "copy"
+  ],
+  "..live.processor": [
+    "live.events",
+    "collections",
+    "live.state"
+  ],
+  "..live.queue": [
+    "collections"
+  ],
+  "..live.replay_engine": [
+    "copy"
+  ],
+  "..live.runtime": [
+    "live.events",
+    "live.queue",
+    "live.predictor",
+    "live.state",
+    "live.processor"
+  ],
+  "..live.snapshot": [
+    "typing",
+    "copy",
+    "dataclasses"
+  ],
+  "..live.state": [
+    "typing",
+    "dataclasses"
+  ],
+  "..live.state_store": [
+    "typing",
+    "dataclasses"
+  ],
+  "..live.ws_adapter": [
+    "live.events"
+  ],
+  "..models.poisson_model": [
+    "math"
+  ]
+}

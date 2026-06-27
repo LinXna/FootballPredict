@@ -1,44 +1,16 @@
-class LearnedFusion:
-    def __init__(self):
-        self.weights = {"elo": 0.5, "poisson": 0.5}
-
-    def fuse(self, elo_pred, poisson_pred):
-
-        result = {"H": 0.0, "D": 0.0, "A": 0.0}
-
-        # -------------------------
-        # safe aggregation
-        # -------------------------
+class FusionEngine:
+    def fuse(self, elo, poisson):
+        result = {}
         for k in ["H", "D", "A"]:
+            result[k] = 0.5 * elo.get(k, 0) + 0.5 * poisson.get(k, 0)
+        return self._normalize(result)
 
-            elo_v = elo_pred.get(k, 0.0)
-            poi_v = poisson_pred.get(k, 0.0)
+    def market_fuse(self, model, market, alpha=0.7):
+        result = {}
+        for k in ["H", "D", "A"]:
+            result[k] = alpha * model.get(k, 0) + (1 - alpha) * market.get(k, 0)
+        return self._normalize(result)
 
-            result[k] = self.weights["elo"] * elo_v + self.weights["poisson"] * poi_v
-
-        # -------------------------
-        # heuristic stabilization (safe version)
-        # -------------------------
-        gap = result["H"] - result["A"]
-
-        if abs(gap) < 0.015:
-            result["H"] *= 1.02
-            result["A"] *= 1.02
-            result["D"] *= 0.96
-
-        result["D"] *= 0.95
-
-        # -------------------------
-        # numerical safety
-        # -------------------------
-        for k in result:
-            if result[k] is None or result[k] != result[k]:
-                result[k] = 0.0
-            result[k] = max(result[k], 1e-9)
-
-        total = sum(result.values())
-
-        if total <= 0:
-            return {"H": 0.33, "D": 0.34, "A": 0.33}
-
-        return {k: result[k] / total for k in result}
+    def _normalize(self, p):
+        s = sum(p.values())
+        return {k: v / s for k, v in p.items()}

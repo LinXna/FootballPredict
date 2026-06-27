@@ -1,4 +1,3 @@
-import time
 from collections import defaultdict, deque
 
 from live.state import MatchState

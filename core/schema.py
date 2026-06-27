@@ -1,5 +1,3 @@
-# core/schema.py
-
 from typing import TypedDict
 
 
@@ -12,5 +10,5 @@ class Odds(TypedDict):
 class Match(TypedDict):
     home: str
     away: str
-    result: str  # H / D / A
-    odds: Odds
+    result: str
+    odds: Odds | None
