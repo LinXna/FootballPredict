@@ -28,3 +28,21 @@ class Pipeline:
     def _normalize(self, p):
         s = sum(p.values())
         return {k: v / s for k, v in p.items()}
+
+    def train(self, matches):
+        """
+        V3.5 收敛训练入口
+        """
+
+        for m in matches:
+            home = m["home"]
+            away = m["away"]
+            result = m["result"]
+
+            # Elo update
+            self.elo.update(home, away, result)
+
+            # Poisson update
+            self.poisson.train([m])
+
+        return True
